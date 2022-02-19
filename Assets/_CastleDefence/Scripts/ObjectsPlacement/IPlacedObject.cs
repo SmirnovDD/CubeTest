@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 
@@ -6,9 +5,11 @@ public interface IPlacedObject : IColorChangable
 {
     ObjectToPlaceType Type { get; }
     BoxCollider Collider { get; }
-    public bool IsSupportBlock { get; }
+    public bool IsSupport { get; }
+    public bool IsGround { get; }
     public int MaxSupportedDistance { get; }
-    public ReactiveCollection <IPlacedObject> SupportingObjects { get; }
-    void AddSupportingObject(IPlacedObject connectedObject);
-    void RemoveSupportingObject(IPlacedObject connectedObject);
+    public ReactiveCollection <NeighbourObject> NeighbourObjects { get; } //TODO maybe change to List<NeighbourObject> to avoid calling ToList()
+    void OnPlaced();
+    void AddNeighbourObject(NeighbourObject connectedObject);
+    void RemoveNeighbourObject(IPlacedObject supportingObject);
 }

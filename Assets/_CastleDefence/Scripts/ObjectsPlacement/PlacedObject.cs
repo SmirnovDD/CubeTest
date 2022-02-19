@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using UniRx;
 using UnityEngine;
 
@@ -11,21 +11,41 @@ public class PlacedObject : MonoBehaviour, IPlacedObject
     [SerializeField] private BoxCollider _collider;
     public BoxCollider Collider => _collider;
 
-    [SerializeField] private bool _isSupportBlock;
-    public bool IsSupportBlock => _isSupportBlock;
-    public int MaxSupportedDistance { get; }
+    [SerializeField] private bool _isSupport;
+    public bool IsSupport => _isSupport;
+
+    [SerializeField] private bool _isGround;
+    public bool IsGround => _isGround;
+
+    [SerializeField] private int _maxSupportedDistance;
+    public int MaxSupportedDistance => _maxSupportedDistance;
 
     private MeshRenderer _meshRenderer;
     private Material _defaultMaterial;
 
-    public ReactiveCollection<IPlacedObject> SupportingObjects { get; } = new();
-
+    public ReactiveCollection<NeighbourObject> NeighbourObjects { get; } = new();
+    
     private void Awake()
     {
         _meshRenderer = GetComponentInChildren<MeshRenderer>();
         _defaultMaterial = _meshRenderer.material;
+        NeighbourObjects.ObserveRemove().Subscribe(x => CheckForSupport()).AddTo(this);
     }
 
+    private void OnDestroy()
+    {
+        for (var i = NeighbourObjects.Count - 1; i >= 0; i--)
+        {
+            var neighbourObject = NeighbourObjects[i];
+            neighbourObject.PlacedObject.RemoveNeighbourObject(this);
+        }
+    }
+
+    public void OnPlaced()
+    {
+        CheckForSupport();
+    }
+    
     public void SetMaterial(Material material)
     {
         _meshRenderer.material = material;
@@ -36,18 +56,29 @@ public class PlacedObject : MonoBehaviour, IPlacedObject
         _meshRenderer.material = _defaultMaterial;
     }
     
-    public void AddSupportingObject(IPlacedObject supportingObject)
+    public void AddNeighbourObject(NeighbourObject supportingObject)
     {
-        SupportingObjects.Add(supportingObject);
+        NeighbourObjects.Add(supportingObject);
     }
 
-    public void RemoveSupportingObject(IPlacedObject supportingObject)
+    public void RemoveNeighbourObject(IPlacedObject supportingObject)
     {
-        SupportingObjects.Remove(supportingObject);
+        var neighbour = NeighbourObjects.FirstOrDefault(el => el.PlacedObject == supportingObject);
+        if (neighbour != null)
+            NeighbourObjects.Remove(neighbour);
     }
 
     private void CheckForSupport()
     {
-        
+        if (!ObjectPlacementUtility.IsObjectSupported(NeighbourObjects.ToList(), _type, _maxSupportedDistance))
+            Destroy(gameObject);
+    }
+
+    private void OnDrawGizmos()
+    {
+        foreach (var neighbourObject in NeighbourObjects)
+        {
+            Debug.DrawLine(transform.position, neighbourObject.PlacedObject.Collider.transform.position);
+        }
     }
 }

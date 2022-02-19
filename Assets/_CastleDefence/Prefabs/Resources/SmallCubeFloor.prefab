@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3922731091936180895}
   - component: {fileID: 2841489171237136783}
   m_Layer: 3
-  m_Name: SmallCubeWall
+  m_Name: SmallCubeFloor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -99,11 +99,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3a2d79097a9462e924ebcd03701d94c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 101
+  _type: 102
   _collider: {fileID: 3922731091936180895}
-  _isSupport: 1
+  _isSupport: 0
   _isGround: 0
-  _maxSupportedDistance: 1
+  _maxSupportedDistance: 7
 --- !u!114 &-3597221749310322113
 MonoBehaviour:
   m_ObjectHideFlags: 0

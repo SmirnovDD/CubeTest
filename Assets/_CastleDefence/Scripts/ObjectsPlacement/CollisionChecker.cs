@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class CollisionChecker : MonoBehaviour
 {
-    public ReactiveProperty<bool> IsColliding = new();
+    public ReactiveProperty<bool> IsCollidingWithBlockingObject = new();
     public Collider Collider { get; private set; }
-    private List<Collider> _colliders = new();
-
+    
+    private readonly List<Collider> _colliders = new();
+    public List<Collider> Colliders => _colliders;
+    
+    private readonly List<Collider> _blockingObjects = new ();
+    
     private void Awake()
     {
         Collider = GetComponent<Collider>();
@@ -15,14 +19,20 @@ public class CollisionChecker : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        IsColliding.Value = true;
         _colliders.Add(other);
+        if (other.gameObject.layer == LayerMask.NameToLayer("PlacingObjectCollisionCheck"))
+        {
+            IsCollidingWithBlockingObject.Value = true;
+            _blockingObjects.Add(other);
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         _colliders.Remove(other);
-        if(_colliders.Count == 0)
-            IsColliding.Value = false;
+        if (other.gameObject.layer == LayerMask.NameToLayer("PlacingObjectCollisionCheck"))
+            _blockingObjects.Remove(other);
+        if(_blockingObjects.Count == 0)
+            IsCollidingWithBlockingObject.Value = false;
     }
 }

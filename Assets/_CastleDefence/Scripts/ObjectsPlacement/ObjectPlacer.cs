@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using StarterAssets;
 using UnityEngine;
@@ -93,19 +94,60 @@ public class ObjectPlacer : MonoBehaviour
         return Vector3.down * 500;
     }
 
-    private void ReleaseObject() //TODO remove snap points
+    private void ReleaseObject()
     {
-        if (Input.GetMouseButtonDown(0) && _objectPlacingTransform && _canPlace && !_objectPlacingCollisionChecker.IsColliding.Value)
+        if (Input.GetMouseButtonDown(0) && _objectPlacingTransform && _canPlace && !_objectPlacingCollisionChecker.IsCollidingWithBlockingObject.Value)
         {
-            Destroy(_objectPlacingTransform.GetComponent<Rigidbody>());
+            var rb = _objectPlacingTransform.GetComponent<Rigidbody>();
+            Destroy(rb);
+            var placedObject = _objectPlacingTransform.GetComponent<PlacedObject>();
+            SetupNeighbours(_objectPlacingCollisionChecker.Colliders, placedObject);
             _objectPlacingTransform.gameObject.layer = LayerMask.NameToLayer("Default");
             _objectPlacingCollisionChecker.Collider.isTrigger = false;
+            placedObject.OnPlaced();
+            Destroy(_objectPlacingCollisionChecker);
             _objectPlacingTransform = null;
             _objectPlacingCollisionChecker = null;
             if (_objectPlacingColorChangable != null)
                 _objectPlacingColorChangable.SetDefaultMaterial();
             SetObjectPlacing(_objectToPlaceType);
         }
+    }
+
+    private void SetupNeighbours(List<Collider> _colliders, PlacedObject placedObject)
+    {
+        foreach (var collidingObject in _colliders)
+        {
+            var neighbour = collidingObject.gameObject;
+            var neighbourObject = neighbour.GetComponent<IPlacedObject>();
+            if (neighbourObject == null)
+                continue;
+            AddNeighbourToPlacedObject(placedObject, neighbourObject);
+            AddNeighbourToPlacedObject(neighbourObject, placedObject);
+        }
+    }
+
+    private void AddNeighbourToPlacedObject(IPlacedObject placedObject, IPlacedObject neighbourObject)
+    {
+        if (CheckForGroundObject(placedObject, neighbourObject))
+            return;
+        
+        var connectedFromSide = ObjectPlacementUtility.GetConnectedSideFromNeighbourObject(placedObject, neighbourObject);
+        if (connectedFromSide != ConnectedFromSide.None)
+            placedObject.AddNeighbourObject(new NeighbourObject(neighbourObject, connectedFromSide));
+    }
+
+    private bool CheckForGroundObject(IPlacedObject placedObject, IPlacedObject neighbourObject)
+    {
+        if (placedObject.IsGround)
+            return true;
+        if (neighbourObject.IsGround)
+        {
+            placedObject.AddNeighbourObject(new NeighbourObject(neighbourObject, ConnectedFromSide.Bottom));
+            return true;
+        }
+
+        return false;
     }
     
     public static GameObject GetGameObjectByName(string name)
@@ -196,6 +238,9 @@ public class ObjectPlacer : MonoBehaviour
         var placedObjectComponent = placedObject.GetComponent<IPlacedObject>();
         
         if (placedObjectComponent == null)
+            return;
+        
+        if (placedObjectComponent.IsGround)
             return;
         
         Destroy(placedObject);
