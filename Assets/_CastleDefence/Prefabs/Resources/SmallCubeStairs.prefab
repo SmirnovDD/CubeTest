@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6351398012741409704
+--- !u!1 &5449725515297225004
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,59 +8,58 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6012132312045748498}
-  - component: {fileID: 2977728137535791724}
-  - component: {fileID: 6248131443093615105}
-  - component: {fileID: 6325287852745219084}
-  - component: {fileID: 6552154170143677859}
+  - component: {fileID: 4677692827845272470}
+  - component: {fileID: 353809174280193125}
+  - component: {fileID: 3383775471011062754}
+  - component: {fileID: 6464273921918547558}
+  - component: {fileID: 6122263933920420563}
   m_Layer: 3
-  m_Name: SmallCubeFloor
+  m_Name: SmallCubeStairs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6012132312045748498
+--- !u!4 &4677692827845272470
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6351398012741409704}
+  m_GameObject: {fileID: 5449725515297225004}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7430592944473610871}
+  - {fileID: 5178165241569838774}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2977728137535791724
+--- !u!114 &353809174280193125
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6351398012741409704}
+  m_GameObject: {fileID: 5449725515297225004}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c3a2d79097a9462e924ebcd03701d94c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 102
-  _collider: {fileID: 6552154170143677859}
+  _type: 103
+  _collider: {fileID: 6122263933920420563}
   _isSupport: 0
   _isGround: 0
-  _overrideSnapPosition: 1
-  _maxSupportedDistance: 7
---- !u!114 &6248131443093615105
+  _maxSupportedDistance: 1
+--- !u!114 &3383775471011062754
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6351398012741409704}
+  m_GameObject: {fileID: 5449725515297225004}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 276ea00d831a443f99610460158b6275, type: 3}
@@ -68,13 +67,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsCollidingWithBlockingObject:
     value: 0
---- !u!54 &6325287852745219084
+--- !u!54 &6464273921918547558
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6351398012741409704}
+  m_GameObject: {fileID: 5449725515297225004}
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
@@ -84,20 +83,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &6552154170143677859
+--- !u!65 &6122263933920420563
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6351398012741409704}
+  m_GameObject: {fileID: 5449725515297225004}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.3, z: 1}
+  m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1 &6875229211303203997
+--- !u!1 &7110407945953104961
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -105,46 +104,46 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7430592944473610871}
-  - component: {fileID: 2225786988991278313}
-  - component: {fileID: 7774788087575392310}
+  - component: {fileID: 5178165241569838774}
+  - component: {fileID: 700706590388246526}
+  - component: {fileID: 5715033927811681701}
   m_Layer: 3
-  m_Name: Cube
+  m_Name: Stairs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7430592944473610871
+--- !u!4 &5178165241569838774
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6875229211303203997}
+  m_GameObject: {fileID: 7110407945953104961}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6012132312045748498}
+  m_Father: {fileID: 4677692827845272470}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2225786988991278313
+--- !u!33 &700706590388246526
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6875229211303203997}
-  m_Mesh: {fileID: -5495902117074765545, guid: d795bf8dada3a3049936c3b074933941, type: 3}
---- !u!23 &7774788087575392310
+  m_GameObject: {fileID: 7110407945953104961}
+  m_Mesh: {fileID: 4104380202958562290, guid: 9093f0c23c85a364583754dde65c42bc, type: 3}
+--- !u!23 &5715033927811681701
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6875229211303203997}
+  m_GameObject: {fileID: 7110407945953104961}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -158,7 +157,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -2091044086764512123, guid: d795bf8dada3a3049936c3b074933941, type: 3}
+  - {fileID: -2091044086764512123, guid: 9093f0c23c85a364583754dde65c42bc, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -145,8 +145,7 @@ namespace UniRx
     [Serializable]
     public class ReactiveCollection<T> : Collection<T>, IReactiveCollection<T>, IDisposable
     {
-        [NonSerialized]
-        bool isDisposed = false;
+        [NonSerialized] bool isDisposed = false;
 
         public ReactiveCollection()
         {
@@ -216,12 +215,13 @@ namespace UniRx
             T oldItem = this[index];
             base.SetItem(index, item);
 
-            if (collectionReplace != null) collectionReplace.OnNext(new CollectionReplaceEvent<T>(index, oldItem, item));
+            if (collectionReplace != null)
+                collectionReplace.OnNext(new CollectionReplaceEvent<T>(index, oldItem, item));
         }
 
 
-        [NonSerialized]
-        Subject<int> countChanged = null;
+        [NonSerialized] Subject<int> countChanged = null;
+
         public IObservable<int> ObserveCountChanged(bool notifyCurrentCount = false)
         {
             if (isDisposed) return Observable.Empty<int>();
@@ -237,40 +237,40 @@ namespace UniRx
             }
         }
 
-        [NonSerialized]
-        Subject<Unit> collectionReset = null;
+        [NonSerialized] Subject<Unit> collectionReset = null;
+
         public IObservable<Unit> ObserveReset()
         {
             if (isDisposed) return Observable.Empty<Unit>();
             return collectionReset ?? (collectionReset = new Subject<Unit>());
         }
 
-        [NonSerialized]
-        Subject<CollectionAddEvent<T>> collectionAdd = null;
+        [NonSerialized] Subject<CollectionAddEvent<T>> collectionAdd = null;
+
         public IObservable<CollectionAddEvent<T>> ObserveAdd()
         {
             if (isDisposed) return Observable.Empty<CollectionAddEvent<T>>();
             return collectionAdd ?? (collectionAdd = new Subject<CollectionAddEvent<T>>());
         }
 
-        [NonSerialized]
-        Subject<CollectionMoveEvent<T>> collectionMove = null;
+        [NonSerialized] Subject<CollectionMoveEvent<T>> collectionMove = null;
+
         public IObservable<CollectionMoveEvent<T>> ObserveMove()
         {
             if (isDisposed) return Observable.Empty<CollectionMoveEvent<T>>();
             return collectionMove ?? (collectionMove = new Subject<CollectionMoveEvent<T>>());
         }
 
-        [NonSerialized]
-        Subject<CollectionRemoveEvent<T>> collectionRemove = null;
+        [NonSerialized] Subject<CollectionRemoveEvent<T>> collectionRemove = null;
+
         public IObservable<CollectionRemoveEvent<T>> ObserveRemove()
         {
             if (isDisposed) return Observable.Empty<CollectionRemoveEvent<T>>();
             return collectionRemove ?? (collectionRemove = new Subject<CollectionRemoveEvent<T>>());
         }
 
-        [NonSerialized]
-        Subject<CollectionReplaceEvent<T>> collectionReplace = null;
+        [NonSerialized] Subject<CollectionReplaceEvent<T>> collectionReplace = null;
+
         public IObservable<CollectionReplaceEvent<T>> ObserveReplace()
         {
             if (isDisposed) return Observable.Empty<CollectionReplaceEvent<T>>();
@@ -319,15 +319,7 @@ namespace UniRx
         {
             Dispose(true);
         }
-        
-        #endregion
-    }
 
-    public static partial class ReactiveCollectionExtensions
-    {
-        public static ReactiveCollection<T> ToReactiveCollection<T>(this IEnumerable<T> source)
-        {
-            return new ReactiveCollection<T>(source);
-        }
+        #endregion
     }
 }

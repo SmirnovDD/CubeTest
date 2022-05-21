@@ -17,6 +17,9 @@ public class PlacedObject : MonoBehaviour, IPlacedObject
     [SerializeField] private bool _isGround;
     public bool IsGround => _isGround;
 
+    [SerializeField] private bool _overrideSnapPosition;
+    public bool OverrideSnapPosition => _overrideSnapPosition;
+
     [SerializeField] private int _maxSupportedDistance;
     public int MaxSupportedDistance => _maxSupportedDistance;
 

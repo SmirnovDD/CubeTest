@@ -20,7 +20,8 @@ public class CollisionChecker : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         _colliders.Add(other);
-        if (other.gameObject.layer == LayerMask.NameToLayer("PlacingObjectCollisionCheck"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("PlacingObjectCollisionCheck") ||
+            other.gameObject.layer == LayerMask.NameToLayer("DynamicObject") || SpaceOccupied(other))
         {
             IsCollidingWithBlockingObject.Value = true;
             _blockingObjects.Add(other);
@@ -30,9 +31,16 @@ public class CollisionChecker : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         _colliders.Remove(other);
-        if (other.gameObject.layer == LayerMask.NameToLayer("PlacingObjectCollisionCheck"))
+        if (_blockingObjects.Contains(other))
             _blockingObjects.Remove(other);
         if(_blockingObjects.Count == 0)
             IsCollidingWithBlockingObject.Value = false;
+    }
+
+    private bool SpaceOccupied(Collider other)
+    {
+        if (Collider.ContainsPoint(other.bounds.center) || other.ContainsPoint(Collider.bounds.center))
+            return true;
+        return false;
     }
 }

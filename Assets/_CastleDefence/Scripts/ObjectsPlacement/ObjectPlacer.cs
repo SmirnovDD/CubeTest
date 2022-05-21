@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using StarterAssets;
+using Unity.Mathematics;
 using UnityEngine;
 
 
@@ -21,7 +22,8 @@ public class ObjectPlacer : MonoBehaviour
     private bool _canPlace;
     private bool _isDeleting;
     private ObjectToPlaceType _objectToPlaceType;
-    
+    private ObjectToPlaceType _lastPlacedObjectType;
+    private Quaternion _lastPlacedObjectRotation;
     public void ToggleDeleting(bool value)
     {
         _isDeleting = value;
@@ -33,6 +35,7 @@ public class ObjectPlacer : MonoBehaviour
     {
         StopPlacing();
         _objectPlacingTransform = GetGameObjectByName(objectToPlaceType.ToString()).transform;
+        _objectPlacingTransform.rotation = GetInitialPlacementRotation();
         _objectPlacingCollisionChecker = _objectPlacingTransform.GetComponent<CollisionChecker>();
         _objectPlacingColorChangable = _objectPlacingTransform.GetComponent<IColorChangable>();
         if (_objectPlacingColorChangable != null)
@@ -75,17 +78,49 @@ public class ObjectPlacer : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, _maxPlaceDistance, _placeObjectLayer))
         {
-            _canPlace = true;
             var targetSnapPoint = hit.point;
             var offset = Vector3.zero;
-            
-            var closestSnapPoint = TryGetClosestSnapPointToCursorRaycast(hit.collider.gameObject, -hit.normal);
-            if (closestSnapPoint.HasValue)
-                targetSnapPoint = closestSnapPoint.Value;
 
-            var closestPlacingObjectSnapPoint = TryGetClosestSnapPointToCursorRaycast(_objectPlacingTransform.gameObject, hit.normal);
-            if (closestPlacingObjectSnapPoint.HasValue)
-                offset = GetOffsetFromCenterToSnapPoint(_objectPlacingTransform.position, closestPlacingObjectSnapPoint.Value);
+            var objectPlacingOn = hit.collider.gameObject.GetComponent<IPlacedObject>();
+            var objectToPlace = _objectPlacingTransform.gameObject.GetComponent<IPlacedObject>();
+            WorldSnapPoint closestSnapPoint = null;
+
+            if (objectPlacingOn != null)
+            {
+                if (objectPlacingOn.IsGround)
+                {
+                    targetSnapPoint = hit.point;
+                }
+                else
+                    closestSnapPoint = TryGetClosestSnapPointToCursorRaycastWithDistance(objectPlacingOn, objectToPlace, hit.point);
+            }
+
+            if (closestSnapPoint != null)
+                targetSnapPoint = closestSnapPoint.WorldPosition;
+
+            WorldSnapPoint closestPlacingObjectSnapPoint = null;
+            if (objectToPlace != null)
+            {
+                closestPlacingObjectSnapPoint = TryGetClosestSnapPointToCursorRaycast(objectToPlace, objectPlacingOn, hit.normal);
+                if (closestPlacingObjectSnapPoint != null)
+                    offset = GetOffsetFromCenterToSnapPoint(_objectPlacingTransform.position, closestPlacingObjectSnapPoint.WorldPosition);
+            }
+
+            if (objectToPlace != null && closestPlacingObjectSnapPoint != null && closestSnapPoint != null)
+            {
+                if (ObjectPlacementUtility.CheckForSupportRule(objectToPlace, closestPlacingObjectSnapPoint.Direction,
+                        closestSnapPoint.Direction))
+                    _canPlace = true;
+            }
+            else
+            {
+                _canPlace = false;
+            }
+
+            if (objectPlacingOn != null && objectPlacingOn.IsGround)
+            {
+                _canPlace = true;
+            }
             
             return targetSnapPoint + offset;
         }
@@ -94,6 +129,13 @@ public class ObjectPlacer : MonoBehaviour
         return Vector3.down * 500;
     }
 
+    private Quaternion GetInitialPlacementRotation()
+    {
+        if (_objectToPlaceType == _lastPlacedObjectType)
+            return _lastPlacedObjectRotation;
+        return quaternion.identity;
+    }
+    
     private void ReleaseObject()
     {
         if (Input.GetMouseButtonDown(0) && _objectPlacingTransform && _canPlace && !_objectPlacingCollisionChecker.IsCollidingWithBlockingObject.Value)
@@ -104,6 +146,8 @@ public class ObjectPlacer : MonoBehaviour
             SetupNeighbours(_objectPlacingCollisionChecker.Colliders, placedObject);
             _objectPlacingTransform.gameObject.layer = LayerMask.NameToLayer("Default");
             _objectPlacingCollisionChecker.Collider.isTrigger = false;
+            _lastPlacedObjectRotation = _objectPlacingTransform.rotation;
+            _lastPlacedObjectType = _objectToPlaceType;
             placedObject.OnPlaced();
             Destroy(_objectPlacingCollisionChecker);
             _objectPlacingTransform = null;
@@ -159,14 +203,37 @@ public class ObjectPlacer : MonoBehaviour
         return instance;
     }
 
-    public static Vector3? TryGetClosestSnapPointToCursorRaycast(GameObject from, Vector3? hitPointNormal)
+    public static WorldSnapPoint TryGetClosestSnapPointToCursorRaycastWithDistance(IPlacedObject objectPlacingOn, IPlacedObject objectToPlace, Vector3? hitPoint)
     {
-        var fromTransform = from.transform;
-        var placingObject = from.GetComponent<PlacedObject>();
-        if (placingObject == null)
-            return null;
+        var snapPoints = ObjectPlacementUtility.GetSnapPointsFromPlacedObject(objectPlacingOn, objectToPlace);
         
-        var snapPoints = ObjectPlacementUtility.GetSnapPointsFromPlacedObject(placingObject);
+        if (hitPoint.HasValue)
+        {
+            float closestDistanceToHitPoint = int.MaxValue; //ideally dot product of point and normal should be -1, meaning that points will collide like that ---><---
+            int closestSnapPointToHitPointIndex = 0;
+            //if I want to do walls like in Vallheim (2 blocks tall), then I should make a list of correctly aligned points
+            //and choose one of them based on is cursor above half of the block I want to snap to |||||point 2  cursor points at upper half of a cube from side
+            //                                                                                    |||||point 1 so choose point 1, if it points to lower - point 2
+            for (var i = 0; i < snapPoints.Length; i++)
+            {
+                var distanceFromSnapPointToHitPoint = (snapPoints[i].WorldPosition - hitPoint.Value).magnitude;
+                if (distanceFromSnapPointToHitPoint < closestDistanceToHitPoint)
+                {
+                    closestDistanceToHitPoint = distanceFromSnapPointToHitPoint;
+                    closestSnapPointToHitPointIndex = i;
+                }
+            }
+            
+            return snapPoints[closestSnapPointToHitPointIndex];
+        }
+        
+        return snapPoints[0];
+    }
+    
+    public static WorldSnapPoint TryGetClosestSnapPointToCursorRaycast(IPlacedObject objectPlacingOn, IPlacedObject objectToPlace, Vector3? hitPointNormal)
+    {
+        var fromTransform = objectPlacingOn.Collider.transform;
+        var snapPoints = ObjectPlacementUtility.GetSnapPointsFromPlacedObject(objectPlacingOn, objectToPlace);
         
         if (hitPointNormal.HasValue)
         {
@@ -178,7 +245,7 @@ public class ObjectPlacer : MonoBehaviour
             for (var i = 0; i < snapPoints.Length; i++)
             {
                 var sortedPoint = snapPoints[i];
-                var currentPointVectorToPlacingObjectCenter = (sortedPoint - fromTransform.position).normalized;
+                var currentPointVectorToPlacingObjectCenter = (sortedPoint.WorldPosition - fromTransform.position).normalized;
                 var dotProductOfVectorFromPointToCenterAndHitNormal = Vector3.Dot(currentPointVectorToPlacingObjectCenter, hitPointNormal.Value);
                 if (dotProductOfVectorFromPointToCenterAndHitNormal < leastAllignedSnapPointWithNormalDotProduct)
                 {
@@ -246,5 +313,17 @@ public class ObjectPlacer : MonoBehaviour
         Destroy(placedObject);
         _destroyingGameObject = null;
         _objectToDestroyColorChangable = null;
+    }
+}
+
+public class WorldSnapPoint
+{
+    public SnapPointsDirections Direction { get; }
+    public Vector3 WorldPosition { get; }
+
+    public WorldSnapPoint(SnapPointsDirections direction, Vector3 worldPosition)
+    {
+        Direction = direction;
+        WorldPosition = worldPosition;
     }
 }

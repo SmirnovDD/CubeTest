@@ -103,6 +103,7 @@ MonoBehaviour:
   _collider: {fileID: 3922731091936180895}
   _isSupport: 1
   _isGround: 0
+  _overrideSnapPosition: 0
   _maxSupportedDistance: 1
 --- !u!114 &-3597221749310322113
 MonoBehaviour:

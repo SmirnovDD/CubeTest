@@ -101,13 +101,13 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 1.8
+  m_Height: 2
   m_Radius: 0.28
   m_SlopeLimit: 45
   m_StepOffset: 0.25
   m_SkinWidth: 0.02
   m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0.93, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &5671572313289442842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,12 +180,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 415abcbd1eb882c419030f1153c03d50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _maxPlaceDistance: 10
   _placeObjectLayer:
     serializedVersion: 2
     m_Bits: 1
-  _input: {fileID: 0}
   _camera: {fileID: 0}
   _stubMaterial: {fileID: 0}
+  _destroyMaterial: {fileID: 0}
 --- !u!1001 &8356827298809233430
 PrefabInstance:
   m_ObjectHideFlags: 0
