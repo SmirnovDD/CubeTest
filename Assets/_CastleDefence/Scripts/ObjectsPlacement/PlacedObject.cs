@@ -7,7 +7,10 @@ public class PlacedObject : MonoBehaviour, IPlacedObject
 {
     [SerializeField] private ObjectToPlaceType _type;
     public ObjectToPlaceType Type => _type;
-    
+
+    [SerializeField] private Collider _colliderToSwap;
+    public Collider ColliderToSwap => _colliderToSwap;
+
     [SerializeField] private BoxCollider _collider;
     public BoxCollider Collider => _collider;
 
@@ -48,7 +51,7 @@ public class PlacedObject : MonoBehaviour, IPlacedObject
     {
         CheckForSupport();
     }
-    
+
     public void SetMaterial(Material material)
     {
         _meshRenderer.material = material;
@@ -64,24 +67,16 @@ public class PlacedObject : MonoBehaviour, IPlacedObject
         NeighbourObjects.Add(supportingObject);
     }
 
-    public void RemoveNeighbourObject(IPlacedObject supportingObject)
+    public void RemoveNeighbourObject(IPlacedObject removedObject)
     {
-        var neighbour = NeighbourObjects.FirstOrDefault(el => el.PlacedObject == supportingObject);
+        var neighbour = NeighbourObjects.FirstOrDefault(el => el.PlacedObject == removedObject);
         if (neighbour != null)
             NeighbourObjects.Remove(neighbour);
     }
 
-    private void CheckForSupport()
+    public void CheckForSupport()
     {
         if (!ObjectPlacementUtility.IsObjectSupported(NeighbourObjects.ToList(), _type, _maxSupportedDistance))
             Destroy(gameObject);
-    }
-
-    private void OnDrawGizmos()
-    {
-        foreach (var neighbourObject in NeighbourObjects)
-        {
-            Debug.DrawLine(transform.position, neighbourObject.PlacedObject.Collider.transform.position);
-        }
     }
 }

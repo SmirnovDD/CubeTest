@@ -34,9 +34,11 @@ public class BuildingGUI : MonoBehaviour
     private void ToggleUI()
     {
         _enabled = !_enabled;
-        _uiPanel.SetActive(_enabled);;
-        _cursor.enabled = !enabled;
+        _uiPanel.SetActive(_enabled);
+        _cursor.enabled = !_cursor.enabled;
         Cursor.lockState = _enabled ? CursorLockMode.Confined : CursorLockMode.Locked;
+        if (_enabled)
+            _objectPlacer.StopPlacing();
     }
     
     private void OnBuildButtonClicked(string type)
@@ -45,6 +47,7 @@ public class BuildingGUI : MonoBehaviour
         {
             _objectPlacer.SetObjectPlacing(objectToPlaceType);
             _objectPlacer.ToggleDeleting(false);
+            ToggleUI();
         }
     }
 

@@ -7,5 +7,6 @@
     SmallCubeWall,
     SmallCubeFloor,
     SmallCubeStairs,
+    Door,
     
 }

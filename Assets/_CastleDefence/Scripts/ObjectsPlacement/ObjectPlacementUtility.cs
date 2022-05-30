@@ -7,12 +7,21 @@ public static class ObjectPlacementUtility
 {
     public static WorldSnapPoint[] GetSnapPointsFromPlacedObject(IPlacedObject objectPlacingOn, IPlacedObject objectToPlace)
     {
+        if (objectPlacingOn == null)
+        {
+            Debug.Log("Object placing on is null");
+            return Array.Empty<WorldSnapPoint>();
+        }
         if (!ObjectsBuildInfo.ObjectsDefaultSnapPoints.ContainsKey(objectPlacingOn.Type) && !ObjectsBuildInfo.ObjectsOverridenSnapPoints.ContainsKey(objectPlacingOn.Type))
         {
             Debug.Log($"{objectPlacingOn.Type} not found in dictionary");
             return Array.Empty<WorldSnapPoint>();
         }
-
+        if (objectToPlace == null)
+        {
+            Debug.Log("Object to place is null");
+            return Array.Empty<WorldSnapPoint>();
+        }  
         var snapPointsDirections = GetSnapPointsDirections(objectPlacingOn.Type, objectToPlace.OverrideSnapPosition);
         WorldSnapPoint[] snapPoints = new WorldSnapPoint[snapPointsDirections.Length];
 
@@ -123,9 +132,16 @@ public static class ObjectPlacementUtility
         if (currentCheckLevel == maxSupportedRange)
             return false;
 
+        if (placedObjectType == ObjectToPlaceType.Ground)
+            return true;
+        
         for (int i = 0; i < neighbourObjects.Count; i++)
         {
             var neighbourObj = neighbourObjects[i];
+
+            if (neighbourObj.PlacedObject == null || neighbourObj.PlacedObject.Collider == null)
+                continue;
+            
             var neighbourObjectSupportSide = ConnectedFromSideToSupportedFromSides(neighbourObj.ConnectedFromSide);
             var requiredSupportSides = ObjectsBuildInfo.ObjectSupportedFromSides[placedObjectType];
             requiredSupportSides = CheckForAllSupportedFromSides(requiredSupportSides);

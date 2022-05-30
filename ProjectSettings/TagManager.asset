@@ -12,8 +12,8 @@ TagManager:
   - PlacingObjectCollisionCheck
   - Water
   - UI
-  - DinamicObject
-  - 
+  - DynamicObject
+  - PlacedObjectIgnorePlayer
   - 
   - 
   - 

@@ -12,5 +12,5 @@ public interface IPlacedObject : IColorChangable
     public ReactiveCollection <NeighbourObject> NeighbourObjects { get; } //TODO maybe change to List<NeighbourObject> to avoid calling ToList()
     void OnPlaced();
     void AddNeighbourObject(NeighbourObject connectedObject);
-    void RemoveNeighbourObject(IPlacedObject supportingObject);
+    void RemoveNeighbourObject(IPlacedObject removedObject);
 }

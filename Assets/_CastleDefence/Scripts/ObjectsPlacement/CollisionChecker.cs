@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CollisionChecker : MonoBehaviour
 {
-    public ReactiveProperty<bool> IsCollidingWithBlockingObject = new();
+    public ReactiveProperty<bool> IsBlocked = new();
     public Collider Collider { get; private set; }
     
     private readonly List<Collider> _colliders = new();
@@ -20,10 +20,12 @@ public class CollisionChecker : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         _colliders.Add(other);
-        if (other.gameObject.layer == LayerMask.NameToLayer("PlacingObjectCollisionCheck") ||
-            other.gameObject.layer == LayerMask.NameToLayer("DynamicObject") || SpaceOccupied(other))
+        var placedObject = other.GetComponent<IPlacedObject>();
+        if (placedObject != null && placedObject.IsGround)
+            return;
+        if (other.gameObject.layer == LayerMask.NameToLayer("DynamicObject") || SpaceOccupied(other))
         {
-            IsCollidingWithBlockingObject.Value = true;
+            IsBlocked.Value = true;
             _blockingObjects.Add(other);
         }
     }
@@ -34,7 +36,7 @@ public class CollisionChecker : MonoBehaviour
         if (_blockingObjects.Contains(other))
             _blockingObjects.Remove(other);
         if(_blockingObjects.Count == 0)
-            IsCollidingWithBlockingObject.Value = false;
+            IsBlocked.Value = false;
     }
 
     private bool SpaceOccupied(Collider other)

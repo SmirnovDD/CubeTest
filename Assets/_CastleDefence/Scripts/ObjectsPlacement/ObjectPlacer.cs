@@ -1,8 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using StarterAssets;
+using UniRx;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -13,6 +10,7 @@ public class ObjectPlacer : MonoBehaviour
     [SerializeField] private LayerMask _placeObjectLayer;
     [SerializeField] private Camera _camera;
     [SerializeField] private Material _stubMaterial;
+    [SerializeField] private Material _blockedMaterial;
     [SerializeField] private Material _destroyMaterial;
     private Transform _objectPlacingTransform;
     private CollisionChecker _objectPlacingCollisionChecker;
@@ -38,6 +36,12 @@ public class ObjectPlacer : MonoBehaviour
         _objectPlacingTransform.rotation = GetInitialPlacementRotation();
         _objectPlacingCollisionChecker = _objectPlacingTransform.GetComponent<CollisionChecker>();
         _objectPlacingColorChangable = _objectPlacingTransform.GetComponent<IColorChangable>();
+        _objectPlacingCollisionChecker.IsBlocked.Subscribe(v =>
+        {
+            var mat = v ? _blockedMaterial : _stubMaterial;
+            _objectPlacingColorChangable.SetMaterial(mat);
+        }).AddTo(_objectPlacingCollisionChecker);
+        
         if (_objectPlacingColorChangable != null)
             _objectPlacingColorChangable.SetMaterial(_stubMaterial);
         _objectToPlaceType = objectToPlaceType;
@@ -46,7 +50,8 @@ public class ObjectPlacer : MonoBehaviour
     private void Update()
     {
         PlaceObject();
-        ReleaseObject();
+        if(Input.GetMouseButtonDown(0))
+            ReleaseObject();
         if (_isDeleting)
         {
             TryDestroySelectedPlacedObject();
@@ -138,13 +143,23 @@ public class ObjectPlacer : MonoBehaviour
     
     private void ReleaseObject()
     {
-        if (Input.GetMouseButtonDown(0) && _objectPlacingTransform && _canPlace && !_objectPlacingCollisionChecker.IsCollidingWithBlockingObject.Value)
+        bool haveObjectToPlace = _objectPlacingTransform != null;
+        bool notCollidingWithBlockingObject = _objectPlacingCollisionChecker != null && !_objectPlacingCollisionChecker.IsBlocked.Value;
+        if (haveObjectToPlace && _canPlace && notCollidingWithBlockingObject)
         {
             var rb = _objectPlacingTransform.GetComponent<Rigidbody>();
             Destroy(rb);
             var placedObject = _objectPlacingTransform.GetComponent<PlacedObject>();
             SetupNeighbours(_objectPlacingCollisionChecker.Colliders, placedObject);
             _objectPlacingTransform.gameObject.layer = LayerMask.NameToLayer("Default");
+
+            if (placedObject.ColliderToSwap != null)
+            {
+                _objectPlacingTransform.gameObject.layer = LayerMask.NameToLayer("PlacedObjectIgnorePlayer");
+                placedObject.ColliderToSwap.gameObject.layer = LayerMask.NameToLayer("Default");;
+                placedObject.ColliderToSwap.isTrigger = false;
+            }
+
             _objectPlacingCollisionChecker.Collider.isTrigger = false;
             _lastPlacedObjectRotation = _objectPlacingTransform.rotation;
             _lastPlacedObjectType = _objectToPlaceType;
@@ -196,7 +211,7 @@ public class ObjectPlacer : MonoBehaviour
     
     public static GameObject GetGameObjectByName(string name)
     {
-        GameObject instance = Instantiate(Resources.Load(name, typeof(GameObject))) as GameObject;
+        GameObject instance = Instantiate(Resources.Load(name, typeof(GameObject)), Vector3.down * 500, Quaternion.identity) as GameObject;
         if (instance == null)
             Debug.LogError($"{name} GO not found in resources");
         
@@ -232,6 +247,9 @@ public class ObjectPlacer : MonoBehaviour
     
     public static WorldSnapPoint TryGetClosestSnapPointToCursorRaycast(IPlacedObject objectPlacingOn, IPlacedObject objectToPlace, Vector3? hitPointNormal)
     {
+        if (objectToPlace == null)
+            return null;
+        
         var fromTransform = objectPlacingOn.Collider.transform;
         var snapPoints = ObjectPlacementUtility.GetSnapPointsFromPlacedObject(objectPlacingOn, objectToPlace);
         
@@ -291,7 +309,7 @@ public class ObjectPlacer : MonoBehaviour
         }
     }
 
-    private void StopPlacing()
+    public void StopPlacing()
     {
         if (_objectPlacingTransform != null)
             Destroy(_objectPlacingTransform.gameObject);

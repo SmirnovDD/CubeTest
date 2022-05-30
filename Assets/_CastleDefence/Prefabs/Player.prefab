@@ -183,7 +183,7 @@ MonoBehaviour:
   _maxPlaceDistance: 10
   _placeObjectLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 129
   _camera: {fileID: 0}
   _stubMaterial: {fileID: 0}
   _destroyMaterial: {fileID: 0}
