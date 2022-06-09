@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 
@@ -23,7 +24,18 @@ public class CollisionChecker : MonoBehaviour
         var placedObject = other.GetComponent<IPlacedObject>();
         if (placedObject != null && placedObject.IsGround)
             return;
-        if (other.gameObject.layer == LayerMask.NameToLayer("DynamicObject") || SpaceOccupied(other))
+        if (other.gameObject.layer == LayerMask.NameToLayer("DynamicObject"))
+        {
+            IsBlocked.Value = true;
+            _blockingObjects.Add(other);
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (_blockingObjects.Contains(other))
+            return;
+        if (SpaceOccupied(other))
         {
             IsBlocked.Value = true;
             _blockingObjects.Add(other);

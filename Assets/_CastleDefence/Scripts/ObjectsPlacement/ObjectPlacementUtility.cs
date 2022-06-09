@@ -62,7 +62,8 @@ public static class ObjectPlacementUtility
             snapPointsDirections = new[]
             {
                 SnapPointsDirections.BackBottom, SnapPointsDirections.BackTop, SnapPointsDirections.FrontBottom, SnapPointsDirections.FrontTop,
-                SnapPointsDirections.LeftBottom, SnapPointsDirections.LeftTop, SnapPointsDirections.RightBottom, SnapPointsDirections.RightTop
+                SnapPointsDirections.LeftBottom, SnapPointsDirections.LeftTop, SnapPointsDirections.RightBottom, SnapPointsDirections.RightTop,
+                SnapPointsDirections.Top, SnapPointsDirections.Bottom
             };
         }
 
@@ -303,10 +304,12 @@ public static class ObjectPlacementUtility
     public static bool ContainsPoint(this Collider collider, Vector3 point)
     {
         Vector3 localPos = collider.transform.InverseTransformPoint(point);
-        var boundsSize = collider.bounds.size;
-        var isXPosInside = LessOrEqualNoFloatError(Mathf.Abs(localPos.x),boundsSize.x / 2);
-        var isYPosInside = LessOrEqualNoFloatError(Mathf.Abs(localPos.y),boundsSize.y / 2);
-        var isZPosInside = LessOrEqualNoFloatError(Mathf.Abs(localPos.z),boundsSize.z / 2);
+        var bounds = collider.bounds;
+        var boundsSize = bounds.size;
+        var boundsCenter = collider.transform.InverseTransformPoint(bounds.center);
+        var isXPosInside = LessOrEqualNoFloatError(Mathf.Abs(localPos.x), boundsCenter.x + boundsSize.x / 2);
+        var isYPosInside = LessOrEqualNoFloatError(Mathf.Abs(localPos.y), boundsCenter.y + boundsSize.y / 2);
+        var isZPosInside = LessOrEqualNoFloatError(Mathf.Abs(localPos.z), boundsCenter.z + boundsSize.z / 2);
         if (isXPosInside && isYPosInside && isZPosInside)
             return true;
         return false;
@@ -317,9 +320,7 @@ public static class ObjectPlacementUtility
     {
         if (a < b)
             return true;
-        if (Mathf.Approximately(a, b))
-            return true;
-        return false;
+        return Mathf.Abs(a - b) < 0.001f;
     }
 
     public static bool CheckForSupportRule(IPlacedObject placedObject, SnapPointsDirections placedObjectSnapPoint, SnapPointsDirections neighbourObjectSnapPoint)
@@ -327,6 +328,8 @@ public static class ObjectPlacementUtility
         var supportRule = ObjectsBuildInfo.ObjectSupportRule[placedObject.Type];
         if (supportRule == SupportRule.HorizontalPlaneOppositeSides)
             return CheckForHorizontalPlaneOppositeSidesRule(placedObjectSnapPoint, neighbourObjectSnapPoint);
+        if (supportRule == SupportRule.Top)
+            return CheckForTopSupportRule(placedObjectSnapPoint, neighbourObjectSnapPoint);
         if (supportRule == SupportRule.All)
             return true;
         Debug.LogError("No rule found");
@@ -340,5 +343,13 @@ public static class ObjectPlacementUtility
             return false;
         
         return true;
+    }
+    
+    private static bool CheckForTopSupportRule(SnapPointsDirections dirA, SnapPointsDirections dirB)
+    {
+        if (dirA == SnapPointsDirections.Top && dirB == SnapPointsDirections.Bottom)
+            return true;
+        
+        return false;
     }
 }

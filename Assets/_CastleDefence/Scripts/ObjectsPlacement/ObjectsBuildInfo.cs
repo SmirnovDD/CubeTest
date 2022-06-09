@@ -31,7 +31,7 @@ public static class ObjectsBuildInfo
         {ObjectToPlaceType.SmallCubeWall, SupportRule.All},
         {ObjectToPlaceType.SmallCubeFloor, SupportRule.HorizontalPlaneOppositeSides},
         {ObjectToPlaceType.SmallCubeStairs, SupportRule.All},
-        {ObjectToPlaceType.Door, SupportRule.All},
+        {ObjectToPlaceType.Door, SupportRule.Top},
     };
 
     public static readonly Dictionary<ObjectToPlaceType, ObjectSnapOffset> ObjectSnapOffsets = new()

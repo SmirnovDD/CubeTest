@@ -111,17 +111,17 @@ public class ObjectPlacer : MonoBehaviour
                     offset = GetOffsetFromCenterToSnapPoint(_objectPlacingTransform.position, closestPlacingObjectSnapPoint.WorldPosition);
             }
 
-            if (objectToPlace != null && closestPlacingObjectSnapPoint != null && closestSnapPoint != null)
-            {
-                if (ObjectPlacementUtility.CheckForSupportRule(objectToPlace, closestPlacingObjectSnapPoint.Direction,
-                        closestSnapPoint.Direction))
-                    _canPlace = true;
-            }
-            else
-            {
-                _canPlace = false;
-            }
-
+            // if (objectToPlace != null && closestPlacingObjectSnapPoint != null && closestSnapPoint != null)
+            // {
+            //     if (ObjectPlacementUtility.CheckForSupportRule(objectToPlace, closestPlacingObjectSnapPoint.Direction,
+            //             closestSnapPoint.Direction))
+            //         _canPlace = true;
+            // }
+            // else
+            // {
+            //     _canPlace = false;
+            // }
+            _canPlace = true;
             if (objectPlacingOn != null && objectPlacingOn.IsGround)
             {
                 _canPlace = true;
@@ -156,7 +156,7 @@ public class ObjectPlacer : MonoBehaviour
             if (placedObject.ColliderToSwap != null)
             {
                 _objectPlacingTransform.gameObject.layer = LayerMask.NameToLayer("PlacedObjectIgnorePlayer");
-                placedObject.ColliderToSwap.gameObject.layer = LayerMask.NameToLayer("Default");;
+                placedObject.ColliderToSwap.gameObject.layer = LayerMask.NameToLayer("Default");
                 placedObject.ColliderToSwap.isTrigger = false;
             }
 
