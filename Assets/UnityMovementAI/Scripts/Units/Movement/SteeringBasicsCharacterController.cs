@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+namespace UnityMovementAI
+{
+    using UnityEngine;
 using System.Collections.Generic;
 
 namespace UnityMovementAI
 {
-    [RequireComponent(typeof(MovementAIRigidbody))]
-    public class SteeringBasics : MonoBehaviour
+    public class SteeringBasicsCharacterController : MonoBehaviour
     {
         [Header("General")]
 
@@ -44,12 +45,12 @@ namespace UnityMovementAI
         Queue<Vector3> velocitySamples = new Queue<Vector3>();
 
 
-        MovementAIRigidbody rb;
+        private CharacterController _characterController;
 
 
         void Awake()
         {
-            rb = GetComponent<MovementAIRigidbody>();
+            _characterController = GetComponent<CharacterController>();
         }
 
         /// <summary>
@@ -58,12 +59,9 @@ namespace UnityMovementAI
         /// </summary>
         public void Steer(Vector3 linearAcceleration)
         {
-            rb.Velocity += linearAcceleration * Time.deltaTime;
-
-            if (rb.Velocity.magnitude > maxVelocity)
-            {
-                rb.Velocity = rb.Velocity.normalized * maxVelocity;
-            }
+            var velocity = Vector3.ClampMagnitude(linearAcceleration, maxVelocity);
+            velocity.y = 0;
+            _characterController.Move(velocity * Time.deltaTime);
         }
 
         /// <summary>
@@ -72,7 +70,7 @@ namespace UnityMovementAI
         public Vector3 Seek(Vector3 targetPosition, float maxSeekAccel)
         {
             /* Get the direction */
-            Vector3 acceleration = rb.ConvertVector(targetPosition - transform.position);
+            Vector3 acceleration = targetPosition - transform.position;
 
             acceleration.Normalize();
 
@@ -92,7 +90,7 @@ namespace UnityMovementAI
         /// </summary>
         public void LookWhereYoureGoing()
         {
-            Vector3 direction = rb.Velocity;
+            Vector3 direction = _characterController.velocity;
 
             if (smoothing)
             {
@@ -101,7 +99,7 @@ namespace UnityMovementAI
                     velocitySamples.Dequeue();
                 }
 
-                velocitySamples.Enqueue(rb.Velocity);
+                velocitySamples.Enqueue(_characterController.velocity);
 
                 direction = Vector3.zero;
 
@@ -123,34 +121,17 @@ namespace UnityMovementAI
             /* If we have a non-zero direction then look towards that direciton otherwise do nothing */
             if (direction.sqrMagnitude > 0.001f)
             {
-                if (rb.is3D)
-                {
-                    /* Mulitply by -1 because counter clockwise on the y-axis is in the negative direction */
-                    float toRotation = -1 * (Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg) + 90;
-                    float rotation = Mathf.LerpAngle(rb.Rotation.eulerAngles.y, toRotation, Time.deltaTime * turnSpeed);
+                /* Mulitply by -1 because counter clockwise on the y-axis is in the negative direction */
+                float toRotation = -1 * (Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg) + 90;
+                float rotation = Mathf.LerpAngle(_characterController.transform.eulerAngles.y, toRotation, Time.deltaTime * turnSpeed);
 
-                    rb.Rotation = Quaternion.Euler(0, rotation, 0);
-                }
-                else
-                {
-                    float toRotation = (Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
-                    float rotation = Mathf.LerpAngle(rb.Rotation.eulerAngles.z, toRotation, Time.deltaTime * turnSpeed);
-
-                    rb.Rotation = Quaternion.Euler(0, 0, rotation);
-                }
+                _characterController.transform.rotation = Quaternion.Euler(0, rotation, 0);
             }
         }
 
         public void LookAtDirection(Quaternion toRotation)
         {
-            if (rb.is3D)
-            {
-                LookAtDirection(toRotation.eulerAngles.y);
-            }
-            else
-            {
-                LookAtDirection(toRotation.eulerAngles.z);
-            }
+            LookAtDirection(toRotation.eulerAngles.y);
         }
 
         /// <summary>
@@ -159,18 +140,10 @@ namespace UnityMovementAI
         /// <param name="toRotation">the desired rotation to be looking at in degrees</param>
         public void LookAtDirection(float toRotation)
         {
-            if (rb.is3D)
-            {
-                float rotation = Mathf.LerpAngle(rb.Rotation.eulerAngles.y, toRotation, Time.deltaTime * turnSpeed);
+            float rotation = Mathf.LerpAngle(_characterController.transform.eulerAngles.y, toRotation,
+                Time.deltaTime * turnSpeed);
 
-                rb.Rotation = Quaternion.Euler(0, rotation, 0);
-            }
-            else
-            {
-                float rotation = Mathf.LerpAngle(rb.Rotation.eulerAngles.z, toRotation, Time.deltaTime * turnSpeed);
-
-                rb.Rotation = Quaternion.Euler(0, 0, rotation);
-            }
+            _characterController.transform.rotation = Quaternion.Euler(0, rotation, 0);
         }
 
         /// <summary>
@@ -180,10 +153,8 @@ namespace UnityMovementAI
         {
             Debug.DrawLine(transform.position, targetPosition, Color.cyan, 0f, false);
 
-            targetPosition = rb.ConvertVector(targetPosition);
-
             /* Get the right direction for the linear acceleration */
-            Vector3 targetVelocity = targetPosition - rb.Position;
+            Vector3 targetVelocity = targetPosition - _characterController.transform.position;
             //Debug.Log("Displacement " + targetVelocity.ToString("f4"));
 
             /* Get the distance to the target */
@@ -192,7 +163,7 @@ namespace UnityMovementAI
             /* If we are within the stopping radius then stop */
             if (dist < targetRadius)
             {
-                rb.Velocity = Vector3.zero;
+                _characterController.Move(Vector3.zero);
                 return Vector3.zero;
             }
 
@@ -209,23 +180,10 @@ namespace UnityMovementAI
 
             /* Give targetVelocity the correct speed */
             targetVelocity.Normalize();
+            targetVelocity.y = 0;
             targetVelocity *= targetSpeed;
 
-            /* Calculate the linear acceleration we want */
-            Vector3 acceleration = targetVelocity - rb.Velocity;
-            /* Rather than accelerate the character to the correct speed in 1 second, 
-             * accelerate so we reach the desired speed in timeToTarget seconds 
-             * (if we were to actually accelerate for the full timeToTarget seconds). */
-            acceleration *= 1 / timeToTarget;
-
-            /* Make sure we are accelerating at max acceleration */
-            if (acceleration.magnitude > maxAcceleration)
-            {
-                acceleration.Normalize();
-                acceleration *= maxAcceleration;
-            }
-            //Debug.Log("Accel " + acceleration.ToString("f4"));
-            return acceleration;
+            return targetVelocity;
         }
 
         public Vector3 Interpose(MovementAIRigidbody target1, MovementAIRigidbody target2)
@@ -321,8 +279,8 @@ namespace UnityMovementAI
 
         public void Stop()
         {
-            rb.Velocity = Vector3.zero;
-            rb.AngularVelocity = 0;
+            _characterController.Move(Vector3.zero);
         }
     }
+}
 }

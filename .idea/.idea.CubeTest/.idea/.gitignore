@@ -1,0 +1,13 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/projectSettingsUpdater.xml
+/modules.xml
+/.idea.CubeTest.iml
+/contentModel.xml
+# Datasource local storage ignored files
+/../../../../../../:\Unity Projects\CubeTest\.idea\.idea.CubeTest\.idea/dataSources/
+/dataSources.local.xml
+# Editor-based HTTP Client requests
+/httpRequests/

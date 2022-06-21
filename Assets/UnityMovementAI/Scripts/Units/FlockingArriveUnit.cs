@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityMovementAI.UnityMovementAI;
 
 namespace UnityMovementAI
 {
@@ -10,19 +11,19 @@ namespace UnityMovementAI
         public float velocityMatchWeight = 1f;
         public NearSensor flockingUnitsensor;
         public NearSensor leaderUnitsensor;
-        SteeringBasics steeringBasics;
-        Cohesion cohesion;
-        Separation separation;
-        VelocityMatch velocityMatch;
-        WallAvoidance wallAvoidance;
+        SteeringBasicsCharacterController steeringBasics;
+        CohesionCharacterController cohesion;
+        SeparationCharacterController separation;
+        VelocityMatchCharacterController velocityMatch;
+        WallAvoidanceCharacterController wallAvoidance;
 
         void Start()
         {
-            steeringBasics = GetComponent<SteeringBasics>();
-            cohesion = GetComponent<Cohesion>();
-            separation = GetComponent<Separation>();
-            velocityMatch = GetComponent<VelocityMatch>();
-            wallAvoidance = GetComponent<WallAvoidance>();
+            steeringBasics = GetComponent<SteeringBasicsCharacterController>();
+            cohesion = GetComponent<CohesionCharacterController>();
+            separation = GetComponent<SeparationCharacterController>();
+            velocityMatch = GetComponent<VelocityMatchCharacterController>();
+            wallAvoidance = GetComponent<WallAvoidanceCharacterController>();
         }
 
         void FixedUpdate()
@@ -41,9 +42,9 @@ namespace UnityMovementAI
             {
                 if (leaderUnitsensor.targets.Count > 0)
                 {
-                    accel += cohesion.GetSteering(leaderUnitsensor.targets) * cohesionWeight;
-                    accel += separation.GetSteering(flockingUnitsensor.targets) * separationWeight;
-                    accel += velocityMatch.GetSteering(leaderUnitsensor.targets) * velocityMatchWeight;
+                    // accel += cohesion.GetSteering(leaderUnitsensor.targets) * cohesionWeight;
+                    // accel += separation.GetSteering(flockingUnitsensor.targets) * separationWeight;
+                    // accel += velocityMatch.GetSteering(leaderUnitsensor.targets) * velocityMatchWeight;
                 }
                 else
                 {

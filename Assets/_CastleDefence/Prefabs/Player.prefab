@@ -47,6 +47,8 @@ GameObject:
   - component: {fileID: 8356827297882819116}
   - component: {fileID: 5969355525251476758}
   - component: {fileID: 8787618649313338744}
+  - component: {fileID: 6327950689373128856}
+  - component: {fileID: 1014188372459914588}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -206,6 +208,38 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   _cameraTransform: {fileID: 0}
+--- !u!114 &6327950689373128856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5671572313289442833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 802bcb6ce7f7f04419fd6a06fd2cafb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxDurability: 100
+--- !u!114 &1014188372459914588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5671572313289442833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13c018f1d91b72946910d9ad35b6464b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _projectilePrefab: {fileID: 6076679409932258701, guid: f4e4197dc55dd4440a3b0e98fa247490,
+    type: 3}
+  _shootForce: 2000
+  _shootPointOffset: {x: 0, y: 1.39, z: 0.3}
+  _shootCheckLayerMask:
+    serializedVersion: 2
+    m_Bits: 3969
 --- !u!1001 &8356827298809233430
 PrefabInstance:
   m_ObjectHideFlags: 0
