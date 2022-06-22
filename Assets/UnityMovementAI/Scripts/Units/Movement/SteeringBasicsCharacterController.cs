@@ -51,6 +51,7 @@ namespace UnityMovementAI
         void Awake()
         {
             _characterController = GetComponent<CharacterController>();
+            _characterController.detectCollisions = true;
         }
 
         /// <summary>
@@ -60,7 +61,12 @@ namespace UnityMovementAI
         public void Steer(Vector3 linearAcceleration)
         {
             var velocity = Vector3.ClampMagnitude(linearAcceleration, maxVelocity);
-            velocity.y = 0;
+            
+            if (_characterController.isGrounded)
+                velocity.y = 0;
+            else
+                velocity += Physics.gravity;
+            
             _characterController.Move(velocity * Time.deltaTime);
         }
 

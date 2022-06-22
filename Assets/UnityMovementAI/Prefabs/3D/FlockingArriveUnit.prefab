@@ -60,8 +60,8 @@ MonoBehaviour:
   cohesionWeight: 1.5
   separationWeight: 1
   velocityMatchWeight: 2
-  flockingUnitsensor: {fileID: 11415046}
-  leaderUnitsensor: {fileID: 3171361987497104066}
+  flockingUnitsensor: {fileID: 4139246284079752336}
+  leaderUnitsensor: {fileID: 8955090427052594309}
 --- !u!114 &1028399006362897238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,6 +94,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfcac85a47ad4f0f85bf0941227fa117, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _movementTimeAfterNoWallsFound: 0.3
   maxAcceleration: 40
   wallDetection: 1
   castMask:
@@ -205,8 +206,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 475080}
-  - component: {fileID: 11415046}
   - component: {fileID: 13533002}
+  - component: {fileID: 4139246284079752336}
   m_Layer: 10
   m_Name: FlockingUnitsSensor
   m_TagString: Untagged
@@ -229,18 +230,6 @@ Transform:
   m_Father: {fileID: 411838}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &11415046
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 145914}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cfdaa6b4aa86854cad04292e279f62e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!135 &13533002
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -254,6 +243,18 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 3.7
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4139246284079752336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 145914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0e6ed5160184180bad14c02f8f9763b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3127724628209247944
 GameObject:
   m_ObjectHideFlags: 0
@@ -263,8 +264,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5485805550236528440}
-  - component: {fileID: 3171361987497104066}
   - component: {fileID: 679768519900919012}
+  - component: {fileID: 8955090427052594309}
   m_Layer: 11
   m_Name: LeaderUnitSensor
   m_TagString: Untagged
@@ -287,18 +288,6 @@ Transform:
   m_Father: {fileID: 411838}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3171361987497104066
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3127724628209247944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cfdaa6b4aa86854cad04292e279f62e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!135 &679768519900919012
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -312,6 +301,18 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 3.7
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8955090427052594309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3127724628209247944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0e6ed5160184180bad14c02f8f9763b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3355264823348681569
 GameObject:
   m_ObjectHideFlags: 0

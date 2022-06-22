@@ -9,8 +9,8 @@ namespace UnityMovementAI
         public float cohesionWeight = 1.5f;
         public float separationWeight = 2f;
         public float velocityMatchWeight = 1f;
-        public NearSensor flockingUnitsensor;
-        public NearSensor leaderUnitsensor;
+        public NearSensorCharacterController flockingUnitsensor;
+        public NearSensorCharacterController leaderUnitsensor;
         SteeringBasicsCharacterController steeringBasics;
         CohesionCharacterController cohesion;
         SeparationCharacterController separation;
@@ -26,7 +26,7 @@ namespace UnityMovementAI
             wallAvoidance = GetComponent<WallAvoidanceCharacterController>();
         }
 
-        void FixedUpdate()
+        void Update()
         {
             if (!MovementActive)
             {
@@ -40,13 +40,16 @@ namespace UnityMovementAI
 
             if (accel.magnitude < 0.005f)
             {
+                if (flockingUnitsensor.targets.Count > 0)
+                {
+                    accel += separation.GetSteering(flockingUnitsensor.targets) * separationWeight;
+                }
                 if (leaderUnitsensor.targets.Count > 0)
                 {
-                    // accel += cohesion.GetSteering(leaderUnitsensor.targets) * cohesionWeight;
-                    // accel += separation.GetSteering(flockingUnitsensor.targets) * separationWeight;
-                    // accel += velocityMatch.GetSteering(leaderUnitsensor.targets) * velocityMatchWeight;
+                    accel += cohesion.GetSteering(leaderUnitsensor.targets) * cohesionWeight;
+                    accel += velocityMatch.GetSteering(leaderUnitsensor.targets) * velocityMatchWeight;
                 }
-                else
+                if (leaderUnitsensor.targets.Count == 0)
                 {
                     if (target != null)
                         accel += steeringBasics.Arrive(target.position);
