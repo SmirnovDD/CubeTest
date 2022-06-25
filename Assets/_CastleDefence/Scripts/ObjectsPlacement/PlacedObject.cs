@@ -29,6 +29,13 @@ public class PlacedObject : MonoBehaviour, IPlacedObject
     private MeshRenderer _meshRenderer;
     private Material _defaultMaterial;
 
+    public bool HasNeighbourFromSide(ConnectedFromSide side)
+    {
+        if (NeighbourObjects.Count == 0)
+            return false;
+        return NeighbourObjects.FirstOrDefault(no => no.ConnectedFromSide == side) != null;
+    }
+
     public ReactiveCollection<NeighbourObject> NeighbourObjects { get; } = new();
     
     private void Awake()
