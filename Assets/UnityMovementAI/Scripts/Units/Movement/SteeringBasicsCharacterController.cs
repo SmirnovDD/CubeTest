@@ -46,6 +46,9 @@ namespace UnityMovementAI
 
 
         private CharacterController _characterController;
+        private bool _tryJump;
+        private Vector3 _verticalVelocity;
+        [SerializeField] private float _jumpHeight = 1.5f;
 
 
         void Awake()
@@ -61,12 +64,21 @@ namespace UnityMovementAI
         public void Steer(Vector3 linearAcceleration)
         {
             var velocity = Vector3.ClampMagnitude(linearAcceleration, maxVelocity);
+
             
             if (_characterController.isGrounded)
-                velocity.y = 0;
-            else
-                velocity += Physics.gravity;
+            {
+                _verticalVelocity.y = 0;
+            }
+            if (_tryJump && _verticalVelocity.y <= 0 && _characterController.isGrounded)
+            {
+                _verticalVelocity.y += Mathf.Sqrt(_jumpHeight * -3.0f * Physics.gravity.y);
+                _tryJump = false;
+            }
             
+            
+            _verticalVelocity += Physics.gravity * Time.deltaTime;
+            _characterController.Move(_verticalVelocity * Time.deltaTime);
             _characterController.Move(velocity * Time.deltaTime);
         }
 
@@ -286,6 +298,11 @@ namespace UnityMovementAI
         public void Stop()
         {
             _characterController.Move(Vector3.zero);
+        }
+
+        public void SetTryJump(bool value)
+        {
+            _tryJump = value;
         }
     }
 }

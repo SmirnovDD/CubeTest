@@ -82,6 +82,7 @@ MonoBehaviour:
   timeToTarget: 0.1
   smoothing: 1
   numSamplesForSmoothing: 5
+  _jumpHeight: 1
 --- !u!114 &113280700334449271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,7 +193,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 0.7
   m_Radius: 0.3
-  m_SlopeLimit: 45
+  m_SlopeLimit: 60
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001

@@ -41,29 +41,45 @@ namespace UnityMovementAI
             steeringBasics = GetComponent<SteeringBasicsCharacterController>();
         }
 
-        public Vector3 GetSteering()
+        public (Vector3 steering, bool jump) GetSteering()
         {
             if (_characterController.velocity.magnitude > 0.005f)
             {
                 return GetSteering(_characterController.velocity);
             }
-            return Vector3.zero;
+            return (Vector3.zero, false);
         }
 
-        public Vector3 GetSteering(Vector3 facingDir)
+        public (Vector3 steering, bool jump) GetSteering(Vector3 facingDir)
         {
             Vector3 acceleration = Vector3.zero;
 
             GenericCastHit hit;
 
             /* If no collision do nothing */
-            if (!FindObstacle(facingDir, out hit))
+            if (FindObstacle(facingDir, out hit)) //CHECK IF CAN JUMP
+            {
+                var placedObject = hit.collider.GetComponentInParent<IPlacedObject>();
+                if (placedObject != null)
+                {
+                    if (placedObject.Type == ObjectToPlaceType.SmallCubeStairs)
+                    {
+                        if (ShouldJumpOverStares(placedObject))
+                            return (Vector3.zero, true);
+                        return (Vector3.zero, false);
+                    }
+                    if (!placedObject.HasNeighbourFromSide(ConnectedFromSide.Top))
+                    {
+                        return (Vector3.zero, true);
+                    }
+                }
+            }
+            else
             {
                 if (Time.time < _timer)
-                    return _storedAcceleration;
-                return acceleration;
+                    return (_storedAcceleration, false);
+                return (acceleration, false);
             }
-
             /* Create a target away from the wall to seek */
             Vector3 targetPosition = hit.point + hit.normal * wallAvoidDistance;
 
@@ -85,9 +101,16 @@ namespace UnityMovementAI
             //SteeringBasics.debugCross(targetPostition, 0.5f, new Color(0.612f, 0.153f, 0.69f), 0.5f, false);
             _storedAcceleration = steeringBasics.Seek(targetPosition, maxAcceleration);
             _timer = Time.time + _movementTimeAfterNoWallsFound;
-            return _storedAcceleration;
+            return (_storedAcceleration, false);
         }
 
+        private bool ShouldJumpOverStares(IPlacedObject placedObject)
+        {
+            if (Vector3.Dot(transform.forward, placedObject.Collider.transform.forward) < 0) //TODO depends on ladder forward vector
+                return true;
+            return false;
+        }
+        
         bool FindObstacle(Vector3 facingDir, out GenericCastHit firstHit)
         {
             facingDir = facingDir.normalized;
@@ -164,17 +187,13 @@ namespace UnityMovementAI
         {
             public Vector3 point;
             public Vector3 normal;
-
+            public Collider collider;
+            
             public GenericCastHit(RaycastHit h)
             {
                 point = h.point;
                 normal = h.normal;
-            }
-
-            public GenericCastHit(RaycastHit2D h)
-            {
-                point = h.point;
-                normal = h.normal;
+                collider = h.collider;
             }
         }
     }

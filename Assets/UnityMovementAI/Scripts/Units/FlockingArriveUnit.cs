@@ -34,9 +34,7 @@ namespace UnityMovementAI
                 return;
             }
             
-            Vector3 accel = Vector3.zero;
-            
-            accel += wallAvoidance.GetSteering();
+            var (accel, isJumping) = wallAvoidance.GetSteering();
 
             if (accel.magnitude < 0.005f)
             {
@@ -44,11 +42,13 @@ namespace UnityMovementAI
                 {
                     accel += separation.GetSteering(flockingUnitsensor.targets) * separationWeight;
                 }
+
                 if (leaderUnitsensor.targets.Count > 0)
                 {
                     accel += cohesion.GetSteering(leaderUnitsensor.targets) * cohesionWeight;
                     accel += velocityMatch.GetSteering(leaderUnitsensor.targets) * velocityMatchWeight;
                 }
+
                 if (leaderUnitsensor.targets.Count == 0)
                 {
                     if (target != null)
@@ -56,6 +56,7 @@ namespace UnityMovementAI
                 }
             }
 
+            steeringBasics.SetTryJump(isJumping);
             steeringBasics.Steer(accel);
             steeringBasics.LookWhereYoureGoing();
         }
