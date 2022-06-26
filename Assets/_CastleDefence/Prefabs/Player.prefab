@@ -221,6 +221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxDurability: 100
+  _isCharacter: 1
 --- !u!114 &1014188372459914588
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,18 +1,21 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityMovementAI;
 
 public class UnitAttack : MonoBehaviour
 {
     [SerializeField] private UnitMovement _unitMovement;
+    [SerializeField] private WallAvoidanceCharacterController _wallAvoidanceCharacterController;
     [SerializeField] private LayerMask _attackMask;
     [SerializeField] private Vector3 _attackRayCheckStartOffset = Vector3.up * 0.5f;
     [SerializeField] private float _attackRange = 1f;
     [SerializeField] private float _damage = 10f;
     [SerializeField] private float _attackCooldown = 1.5f;
+    [SerializeField] private float _attackDelayMin = 0;
+    [SerializeField] private float _attackDelayMax = 100f;
+    
     private Transform _transform;
-    private float _timer;
+    private float _attackTimer;
+    private float _decisionToAttackDelay;
     
     private void Awake()
     {
@@ -25,13 +28,23 @@ public class UnitAttack : MonoBehaviour
         
         if (target == null)
         {
+            _decisionToAttackDelay = 0;
             ToggleUnitMovement(true);
             return;
         }
+
+        if (_wallAvoidanceCharacterController.PathBlocked)
+            _decisionToAttackDelay = Time.time + Random.Range(_attackDelayMin, _attackDelayMax);
+
+        if (target.IsCharacter)
+            _decisionToAttackDelay = 0;
+        
+        if (Time.time < _decisionToAttackDelay)
+            return;
         
         ToggleUnitMovement(false);
         
-        if (Time.time > _timer)
+        if (Time.time > _attackTimer)
             Attack(target);
     }
 
@@ -60,6 +73,6 @@ public class UnitAttack : MonoBehaviour
 
     private void StartAttackCooldown()
     {
-        _timer = Time.time + _attackCooldown;
+        _attackTimer = Time.time + _attackCooldown;
     }
 }

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6248131443093615105}
   - component: {fileID: 6325287852745219084}
   - component: {fileID: 6552154170143677859}
+  - component: {fileID: -7980548129216711684}
   m_Layer: 3
   m_Name: SmallCubeFloor
   m_TagString: Untagged
@@ -49,6 +50,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _type: 102
+  _colliderToSwap: {fileID: 0}
   _collider: {fileID: 6552154170143677859}
   _isSupport: 0
   _isGround: 0
@@ -66,7 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 276ea00d831a443f99610460158b6275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsCollidingWithBlockingObject:
+  IsBlocked:
     value: 0
 --- !u!54 &6325287852745219084
 Rigidbody:
@@ -97,6 +99,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.3, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-7980548129216711684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6351398012741409704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 802bcb6ce7f7f04419fd6a06fd2cafb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxDurability: 30
+  _isCharacter: 0
 --- !u!1 &6875229211303203997
 GameObject:
   m_ObjectHideFlags: 0

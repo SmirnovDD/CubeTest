@@ -4,4 +4,5 @@ public interface IDestructable
     float MaxDurability { get; }
     void Damage(float damage);
     void Destroy();
+    bool IsCharacter { get; }
 }

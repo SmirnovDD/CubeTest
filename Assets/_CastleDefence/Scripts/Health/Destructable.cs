@@ -9,6 +9,9 @@ public class Destructable : MonoBehaviour, IDestructable
     [SerializeField] private float _maxDurability = 100;
     public float MaxDurability => _maxDurability;
 
+    [SerializeField] private bool _isCharacter;
+    public bool IsCharacter => _isCharacter;
+
     private void Awake()
     {
         _durability = MaxDurability;

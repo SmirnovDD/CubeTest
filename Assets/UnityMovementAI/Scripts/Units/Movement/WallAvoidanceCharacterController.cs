@@ -29,7 +29,8 @@ namespace UnityMovementAI
 
         public float sideWhiskerAngle = 45f;
 
-
+        public bool PathBlocked { get; private set; }
+        
         CharacterController _characterController;
         SteeringBasicsCharacterController steeringBasics;
         private Vector3 _storedAcceleration;
@@ -59,6 +60,7 @@ namespace UnityMovementAI
             /* If no collision do nothing */
             if (FindObstacle(facingDir, out hit)) //CHECK IF CAN JUMP
             {
+                PathBlocked = true;
                 var placedObject = hit.collider.GetComponentInParent<IPlacedObject>();
                 if (placedObject != null)
                 {
@@ -76,6 +78,7 @@ namespace UnityMovementAI
             }
             else
             {
+                PathBlocked = false;
                 if (Time.time < _timer)
                     return (_storedAcceleration, false);
                 return (acceleration, false);

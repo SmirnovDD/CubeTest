@@ -160,13 +160,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _unitMovement: {fileID: 491020790292060560}
+  _wallAvoidanceCharacterController: {fileID: 113280700334449271}
   _attackMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 65
   _attackRayCheckStartOffset: {x: 0, y: 0, z: 0}
   _attackRange: 0.5
   _damage: 10
   _attackCooldown: 1.5
+  _attackDelayMin: 0
+  _attackDelayMax: 100
 --- !u!114 &7301617818930270473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,6 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxDurability: 20
+  _isCharacter: 0
 --- !u!143 &8815666437335643521
 CharacterController:
   m_ObjectHideFlags: 0
