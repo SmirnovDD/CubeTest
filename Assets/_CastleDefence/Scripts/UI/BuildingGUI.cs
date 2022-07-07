@@ -1,4 +1,5 @@
 ﻿using System;
+using StarterAssets;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,8 @@ public class BuildingGUI : MonoBehaviour
     [SerializeField] private Button _deleteButton;
     [SerializeField] private Image _cursor;
     [SerializeField] private ObjectPlacer _objectPlacer;
-    private bool _enabled;
+    [SerializeField] private ThirdPersonController _thirdPersonController;
+    private bool _uiEnabled;
 
     private void Awake()
     {
@@ -33,12 +35,13 @@ public class BuildingGUI : MonoBehaviour
 
     private void ToggleUI()
     {
-        _enabled = !_enabled;
-        _uiPanel.SetActive(_enabled);
+        _uiEnabled = !_uiEnabled;
+        _uiPanel.SetActive(_uiEnabled);
         _cursor.enabled = !_cursor.enabled;
-        Cursor.lockState = _enabled ? CursorLockMode.Confined : CursorLockMode.Locked;
-        if (_enabled)
+        Cursor.lockState = _uiEnabled ? CursorLockMode.Confined : CursorLockMode.Locked;
+        if (_uiEnabled)
             _objectPlacer.StopPlacing();
+        _thirdPersonController.LockCameraYRotation = _uiEnabled;
     }
     
     private void OnBuildButtonClicked(string type)

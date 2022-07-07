@@ -3,24 +3,16 @@ using UnityMovementAI;
 
 public class UnitSpawner : MonoBehaviour
 {
-    [SerializeField] private float _spawnTime = 60f;
+    [SerializeField] private Transform _target;
+    [SerializeField] private int _min;
+    [SerializeField] private int _max;
     [SerializeField] private GameObject _prefab;
 
-    private float _timer;
-    private Transform _target;
-    
-    private void Start()
-    {
-        _timer = Time.time + _spawnTime;
-        _target = FindObjectOfType<PlayerAttack>().transform;
-    }
-
     // Update is called once per frame
-    void Update()
+    public void Spawn()
     {
-        if (Input.GetKeyDown(KeyCode.F11))
-
-        for (int i = 0; i < 5; i++)
+        var randomAmount = Random.Range(_min, _max);
+        for (int i = 0; i < randomAmount; i++)
         {
             var unit = Instantiate(_prefab, transform);
             unit.GetComponentInChildren<FlockingArriveUnit>().target = _target;

@@ -58,6 +58,7 @@ namespace StarterAssets
 		public float CameraAngleOverride = 0.0f;
 		[Tooltip("For locking the camera position on all axis")]
 		public bool LockCameraPosition = false;
+		public bool LockCameraYRotation = false;
 
 		// cinemachine
 		private float _cinemachineTargetYaw;
@@ -153,10 +154,11 @@ namespace StarterAssets
 		{
 			// if there is an input and camera position is not fixed
 			//if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
-			if (_input.MouseDelta.sqrMagnitude >= _threshold && !LockCameraPosition)
+			if (_input.MouseDelta.sqrMagnitude >= _threshold)
 			{
 				_cinemachineTargetYaw += _input.MouseDelta.x * Time.deltaTime;
-				_cinemachineTargetPitch += _input.MouseDelta.y * Time.deltaTime;
+				if (!LockCameraYRotation)
+					_cinemachineTargetPitch += _input.MouseDelta.y * Time.deltaTime;
 			}
 
 			// clamp our rotations so our values are limited 360 degrees

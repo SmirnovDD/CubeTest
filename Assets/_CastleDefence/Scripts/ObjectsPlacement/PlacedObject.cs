@@ -26,8 +26,8 @@ public class PlacedObject : MonoBehaviour, IPlacedObject
     [SerializeField] private int _maxSupportedDistance;
     public int MaxSupportedDistance => _maxSupportedDistance;
 
-    private MeshRenderer _meshRenderer;
-    private Material _defaultMaterial;
+    private MeshRenderer[] _meshRenderers;
+    private Material[] _defaultMaterials;
 
     public bool HasNeighbourFromSide(ConnectedFromSide side)
     {
@@ -40,8 +40,13 @@ public class PlacedObject : MonoBehaviour, IPlacedObject
     
     private void Awake()
     {
-        _meshRenderer = GetComponentInChildren<MeshRenderer>();
-        _defaultMaterial = _meshRenderer.material;
+        _meshRenderers = GetComponentsInChildren<MeshRenderer>();
+        _defaultMaterials = new Material[_meshRenderers.Length];
+        
+        for (int i = 0; i < _meshRenderers.Length; i++)
+        {
+            _defaultMaterials[i] = _meshRenderers[i].material;
+        }
         NeighbourObjects.ObserveRemove().Subscribe(x => CheckForSupport()).AddTo(this);
     }
 
@@ -61,12 +66,19 @@ public class PlacedObject : MonoBehaviour, IPlacedObject
 
     public void SetMaterial(Material material)
     {
-        _meshRenderer.material = material;
+        foreach (var meshRenderer in _meshRenderers)
+        {
+            meshRenderer.material = material;
+        }
     }
 
     public void SetDefaultMaterial()
     {
-        _meshRenderer.material = _defaultMaterial;
+        for (var i = 0; i < _meshRenderers.Length; i++)
+        {
+            var meshRenderer = _meshRenderers[i];
+            meshRenderer.material = _defaultMaterials[i];
+        }
     }
     
     public void AddNeighbourObject(NeighbourObject supportingObject)

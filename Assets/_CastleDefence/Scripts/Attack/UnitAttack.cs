@@ -3,6 +3,7 @@ using UnityMovementAI;
 
 public class UnitAttack : MonoBehaviour
 {
+    [SerializeField] private Animator _animator;
     [SerializeField] private UnitMovement _unitMovement;
     [SerializeField] private WallAvoidanceCharacterController _wallAvoidanceCharacterController;
     [SerializeField] private LayerMask _attackMask;
@@ -16,7 +17,9 @@ public class UnitAttack : MonoBehaviour
     private Transform _transform;
     private float _attackTimer;
     private float _decisionToAttackDelay;
-    
+    private bool _chosenAttackDelay;
+    private static readonly int AnimatorAttackTriggerName = Animator.StringToHash("Attack");
+
     private void Awake()
     {
         _transform = transform;
@@ -29,12 +32,16 @@ public class UnitAttack : MonoBehaviour
         if (target == null)
         {
             _decisionToAttackDelay = 0;
+            _chosenAttackDelay = false;
             ToggleUnitMovement(true);
             return;
         }
 
-        if (_wallAvoidanceCharacterController.PathBlocked)
-            _decisionToAttackDelay = Time.time + Random.Range(_attackDelayMin, _attackDelayMax);
+        if (_wallAvoidanceCharacterController.PathBlocked && !_chosenAttackDelay)
+        {
+            _decisionToAttackDelay = Time.time + Random.Range(_attackDelayMin, _attackDelayMax); //TODO do not reassign
+            _chosenAttackDelay = true;
+        }
 
         if (target.IsCharacter)
             _decisionToAttackDelay = 0;
@@ -43,9 +50,12 @@ public class UnitAttack : MonoBehaviour
             return;
         
         ToggleUnitMovement(false);
-        
+
         if (Time.time > _attackTimer)
+        {
             Attack(target);
+            _chosenAttackDelay = false;
+        }
     }
 
     private void ToggleUnitMovement(bool value)
@@ -68,6 +78,7 @@ public class UnitAttack : MonoBehaviour
     private void Attack(IDestructable target)
     {
         target.Damage(_damage);
+        _animator.SetTrigger(AnimatorAttackTriggerName);
         StartAttackCooldown();
     }
 

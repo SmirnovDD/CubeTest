@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UniRx;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -175,8 +176,11 @@ public class ObjectPlacer : MonoBehaviour
 
     private void SetupNeighbours(List<Collider> _colliders, PlacedObject placedObject)
     {
-        foreach (var collidingObject in _colliders)
+        for (var i = _colliders.Count - 1; i >= 0; i--)
         {
+            var collidingObject = _colliders[i];
+            if (collidingObject == null)
+                continue;
             var neighbour = collidingObject.gameObject;
             var neighbourObject = neighbour.GetComponent<IPlacedObject>();
             if (neighbourObject == null)

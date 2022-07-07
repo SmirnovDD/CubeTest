@@ -44,11 +44,10 @@ namespace UnityMovementAI
 
         public (Vector3 steering, bool jump) GetSteering()
         {
-            if (_characterController.velocity.magnitude > 0.005f)
-            {
-                return GetSteering(_characterController.velocity);
-            }
-            return (Vector3.zero, false);
+            var direction = _characterController.velocity.magnitude > 0.005f
+                ? _characterController.velocity
+                : _characterController.transform.forward;
+            return GetSteering(direction);
         }
 
         public (Vector3 steering, bool jump) GetSteering(Vector3 facingDir)

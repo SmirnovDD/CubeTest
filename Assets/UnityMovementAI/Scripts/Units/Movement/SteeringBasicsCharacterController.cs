@@ -8,6 +8,7 @@ namespace UnityMovementAI
     public class SteeringBasicsCharacterController : MonoBehaviour
     {
         [Header("General")]
+        [SerializeField] private Animator _animator;
 
         public float maxVelocity = 3.5f;
 
@@ -49,6 +50,8 @@ namespace UnityMovementAI
         private bool _tryJump;
         private Vector3 _verticalVelocity;
         [SerializeField] private float _jumpHeight = 1.5f;
+        private static readonly int HorizontalVelocityAnimatorParameter = Animator.StringToHash("HorizontalVelocity");
+        private static readonly int VerticalVelocityAnimatorParameter = Animator.StringToHash("VerticalVelocity");
 
 
         void Awake()
@@ -63,8 +66,8 @@ namespace UnityMovementAI
         /// </summary>
         public void Steer(Vector3 linearAcceleration)
         {
+            linearAcceleration.y = 0;
             var velocity = Vector3.ClampMagnitude(linearAcceleration, maxVelocity);
-
             
             if (_characterController.isGrounded)
             {
@@ -72,14 +75,18 @@ namespace UnityMovementAI
             }
             if (_tryJump && _verticalVelocity.y <= 0 && _characterController.isGrounded)
             {
-                _verticalVelocity.y += Mathf.Sqrt(_jumpHeight * -3.0f * Physics.gravity.y);
+                _verticalVelocity.y += Mathf.Sqrt(_jumpHeight * -Physics.gravity.y);
                 _tryJump = false;
             }
-            
             
             _verticalVelocity += Physics.gravity * Time.deltaTime;
             _characterController.Move(_verticalVelocity * Time.deltaTime);
             _characterController.Move(velocity * Time.deltaTime);
+            Debug.DrawRay(_characterController.transform.position, _verticalVelocity, Color.blue);
+            Debug.DrawRay(_characterController.transform.position, velocity, Color.magenta);
+            Debug.DrawRay(_characterController.transform.position, _characterController.velocity, Color.red);
+            _animator.SetFloat(HorizontalVelocityAnimatorParameter, velocity.sqrMagnitude);
+            _animator.SetFloat(VerticalVelocityAnimatorParameter, _verticalVelocity.y);
         }
 
         /// <summary>
