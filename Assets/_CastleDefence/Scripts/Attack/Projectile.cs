@@ -5,11 +5,6 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField] private float _damage = 20;
 
-    private void Awake()
-    {
-        Invoke(nameof(SelfDestroy), 3f);
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         var destructable = other.GetComponent<IDestructable>();

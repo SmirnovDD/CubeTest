@@ -1,49 +1,38 @@
-﻿// LICENSE
-//
-//   This software is dual-licensed to the public domain and under the following
-//   license: you are granted a perpetual, irrevocable license to copy, modify,
-//   publish, and distribute this file as you see fit.
+﻿using UnityEngine;
 
-using UnityEngine;
-using System.Collections;
-
-public class BallisticMotion : MonoBehaviour {
-
-    // Private fields
-    Vector3 lastPos;
-    Vector3 impulse;
-    float gravity;
-    private Rigidbody rb;
+public class BallisticMotion : MonoBehaviour 
+{
+    private Vector3 _impulse;
+    private float _shotTimer;
+    private Transform _transform;
+    private float _gravity;
+    private Vector3 _lastPos;
+    
     public void Initialize(Vector3 pos, float gravity)
     {
-        rb = GetComponent<Rigidbody>();
-        transform.position = pos;
-        lastPos = transform.position;
-        this.gravity = gravity;
+        _transform = transform;
+        _transform.position = pos;
+        _gravity = gravity;
     }
 
-	void FixedUpdate () 
+    protected void Update ()
     {
-        // // Simple verlet integration
-        // float dt = Time.fixedDeltaTime;
-        // Vector3 accel = -gravity * Vector3.up;
-        //
-        // Vector3 curPos = transform.position;
-        // Vector3 newPos = curPos + (curPos-lastPos) + impulse*dt + accel*dt*dt;
-        // lastPos = curPos;
-        // transform.position = newPos;
-        // transform.forward = newPos - lastPos;
-        //
-        // impulse = Vector3.zero;
+        float dt = Time.deltaTime;
+            
+        Vector3 curPos = _transform.position;
+        Vector3 newPos = curPos + (_transform.forward * (_impulse.magnitude * dt)) + Vector3.up * (_gravity * (dt * dt));
+        _lastPos = curPos;
+        _transform.position = newPos;
+        _transform.forward = newPos - _lastPos;
 
-        // Z-kill
-        if (transform.position.y < -5f)
+        if (_transform.position.y <= -0.5)
+        {
             Destroy(gameObject);
-	}
+        }
+    }
 
-    public void AddImpulse(Vector3 impulse) 
+    public virtual void AddImpulse(Vector3 impulse)
     {
-        //this.impulse += impulse;
-        rb.AddForce(impulse, ForceMode.Impulse);
+        _impulse = impulse;
     }
 }

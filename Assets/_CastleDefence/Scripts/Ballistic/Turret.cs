@@ -6,11 +6,12 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using ShipShooting.Math;
 
 public class Turret : MonoBehaviour {
 
     // Inspector fields
-    [SerializeField] GameObject projPrefab;
+    [SerializeField] BallisticMotion projPrefab;
     [SerializeField] Transform muzzle;
     // Private fields
     private List<CharacterController> _targets = new ();
@@ -35,49 +36,50 @@ public class Turret : MonoBehaviour {
     // Methods
     void Update() {
         float projSpeed = _velocity;
-        float gravity = -Physics.gravity.y;
+        float gravity = Physics.gravity.y;
         Vector3 projPos = muzzle.position;
 
         if (state == State.Searching) {
             if (_targets.Count > 0)
             {
                 curTarget = GetClosestEnemy(_targets);
-                state = State.Aiming;
+                if (curTarget != null)
+                    state = State.Aiming;
             }
 
         }
 
         if (state == State.Aiming) {
 
-            Vector3 targetPos = curTarget.transform.position;
+            Vector3 targetPos = curTarget.transform.position + Vector3.up;
             Vector3 diff = targetPos - projPos;
             Vector3 diffGround = new Vector3(diff.x, 0f, diff.z);
 
             if (_aimMode == Parameters.AimMode.Normal) 
             {
-                Vector3[] solutions = new Vector3[2];
-                int numSolutions;
+                Vector3 targetDirLow;
+                Vector3 targetDirHigh;
+                float shootAngle;
 
-                if (curTarget.velocity.sqrMagnitude > 0)
-                    numSolutions = fts.solve_ballistic_arc(projPos, projSpeed, targetPos, curTarget.velocity, gravity, out solutions[0], out solutions[1]);
-                else
-                    numSolutions = fts.solve_ballistic_arc(projPos, projSpeed, targetPos, gravity, out solutions[0], out solutions[1]);
+                var muzzlePosition = muzzle.position;
+                
+                BallisticShootingMath.SolveBallisticArc(muzzlePosition, _velocity, targetPos, -gravity, out targetDirLow, out targetDirHigh, out shootAngle);
+			
+                Vector3 targetVelocity = curTarget.velocity;
+                var ammo = Instantiate(projPrefab, muzzlePosition, Quaternion.identity);
+                ammo.Initialize(muzzlePosition, gravity);
+                
+                Vector3 targetPredictedPos = BallisticShootingMath.ApproximateTargetPositionBallisticSimple(ammo.transform.position, _velocity, shootAngle, targetPos, targetVelocity);
+                //Vector3 scatter = Random.insideUnitCircle * (_shipCannons.ShipCannonsParams.ShootScatter + _shipCannons.GetScatterModifier());
+                //Quaternion scatterRotation = Quaternion.FromToRotation(Vector3.forward, Vector3.up);
+                //Vector3 rotatedScatter = scatterRotation * scatter;
+                //Vector3 targetPredictedPosWithScatter = targetPredictedPos + rotatedScatter;
+                BallisticShootingMath.SolveBallisticArc(muzzlePosition, _velocity, targetPredictedPos, -gravity, out targetDirLow, out targetDirHigh, out shootAngle);
+            
+                ammo.transform.forward = targetDirLow.normalized;
+                ammo.AddImpulse(targetDirLow);
 
-                if (numSolutions > 0) {
-                    transform.forward = diffGround;
-
-                    var proj = GameObject.Instantiate<GameObject>(projPrefab);
-                    var motion = proj.GetComponent<BallisticMotion>();
-                    motion.Initialize(projPos, gravity);
-
-                    var index = solutionIndex % numSolutions;
-                    var impulse = solutions[index];
-                    ++solutionIndex;
-
-                    motion.AddImpulse(impulse);
-
-                    state = State.Firing;
-                }
+                state = State.Firing;
             }
             else if (_aimMode == Parameters.AimMode.Lateral) {
                 Vector3 fireVel, impactPos;
@@ -85,11 +87,10 @@ public class Turret : MonoBehaviour {
                 if (fts.solve_ballistic_arc_lateral(projPos, projSpeed, targetPos, curTarget.velocity, _arcPeak, out fireVel, out gravity, out impactPos)) {
                     transform.forward = diffGround;
 
-                    var proj = GameObject.Instantiate<GameObject>(projPrefab);
-                    var motion = proj.GetComponent<BallisticMotion>();
-                    motion.Initialize(projPos, gravity);
-
-                    motion.AddImpulse(fireVel);
+                    var proj = Instantiate(projPrefab);
+                    
+                    proj.Initialize(projPos, gravity);
+                    proj.AddImpulse(fireVel);
 
                     state = State.Firing;
                 }
@@ -116,8 +117,13 @@ public class Turret : MonoBehaviour {
         CharacterController bestTarget = null;
         float closestDistanceSqr = Mathf.Infinity;
         Vector3 currentPosition = transform.position;
-        for (int i = 0; i < enemies.Count; i++)
+        for (int i = enemies.Count - 1; i >= 0; i--)
         {
+            if (enemies[i] == null)
+            {
+                enemies.RemoveAt(i);
+                continue;
+            }
             Vector3 directionToTarget = enemies[i].transform.position - currentPosition;
             float dSqrToTarget = directionToTarget.sqrMagnitude;
             if(dSqrToTarget < closestDistanceSqr)
