@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 2025.3994, g: 1991.9395, b: 2399.039, a: 1}
+  m_IndirectSpecularColor: {r: 2025.4912, g: 1991.5605, b: 2398.6445, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1750,18 +1750,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1217841494}
   m_CullTransparentMesh: 1
---- !u!114 &1315057535 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2070925441746177913, guid: a1a802ecaf6775746bb2a929fb554ad8,
-    type: 3}
-  m_PrefabInstance: {fileID: 1817417047}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45e653bab7fb20e499bda25e1b646fea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1375525645
 GameObject:
   m_ObjectHideFlags: 0
@@ -2566,21 +2554,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1014188372459914588, guid: 0b7943fee0746324583888882fff3df4,
-        type: 3}
-      propertyPath: _shootPointOffset.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1014188372459914588, guid: 0b7943fee0746324583888882fff3df4,
-        type: 3}
-      propertyPath: _shootPointOffset.y
-      value: 1.375
-      objectReference: {fileID: 0}
-    - target: {fileID: 1014188372459914588, guid: 0b7943fee0746324583888882fff3df4,
-        type: 3}
-      propertyPath: _shootPointOffset.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5043653714137488555, guid: 0b7943fee0746324583888882fff3df4,
         type: 3}
       propertyPath: m_RootOrder
@@ -2646,26 +2619,6 @@ PrefabInstance:
       propertyPath: _camera
       value: 
       objectReference: {fileID: 1823688466}
-    - target: {fileID: 5969355525251476758, guid: 0b7943fee0746324583888882fff3df4,
-        type: 3}
-      propertyPath: _stubMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: e8225adf303ac724c8144c360fcdb302, type: 2}
-    - target: {fileID: 5969355525251476758, guid: 0b7943fee0746324583888882fff3df4,
-        type: 3}
-      propertyPath: _blockedMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: e674f378b1a26f748870882ef4ce4455, type: 2}
-    - target: {fileID: 5969355525251476758, guid: 0b7943fee0746324583888882fff3df4,
-        type: 3}
-      propertyPath: _destroyMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: c4c925c183d5c0644a8d4f810f81a9fe, type: 2}
-    - target: {fileID: 8787618649313338744, guid: 0b7943fee0746324583888882fff3df4,
-        type: 3}
-      propertyPath: _camera
-      value: 
-      objectReference: {fileID: 1315057535}
     - target: {fileID: 8787618649313338744, guid: 0b7943fee0746324583888882fff3df4,
         type: 3}
       propertyPath: _cameraTransform

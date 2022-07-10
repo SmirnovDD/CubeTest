@@ -149,7 +149,7 @@ public class ObjectPlacer : MonoBehaviour
         if (haveObjectToPlace && _canPlace && notCollidingWithBlockingObject)
         {
             var placedObject = _objectPlacingTransform.GetComponent<PlacedObject>();
-            if (placedObject.Type < ObjectToPlaceType.СOMBAT || placedObject.Type > ObjectToPlaceType.NON_COMBAT)
+            if (!placedObject.IsCombatObject)
             {
                 var rb = _objectPlacingTransform.GetComponent<Rigidbody>();
                 Destroy(rb);

@@ -1,15 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-    [SerializeField] private Rigidbody _projectilePrefab;
+    [SerializeField] private BallisticMotion _projectilePrefab;
     [SerializeField] private float _shootForce;
     [SerializeField] private Vector3 _shootPointOffset = new Vector3(0f, 1f, 0.3f);
-    [SerializeField] private LayerMask _shootCheckLayerMask;
     
     private Transform _cameraTransform;
 
@@ -28,13 +23,14 @@ public class PlayerAttack : MonoBehaviour
     {
         var position = transform.position;
         var shootPoint = position + _shootPointOffset;
-        var projectileRb = Instantiate(_projectilePrefab, shootPoint, quaternion.identity);
+        var projectile = Instantiate(_projectilePrefab, shootPoint, Quaternion.identity);
         var ray = new Ray(_cameraTransform.position, _cameraTransform.forward);
         var targetPoint = ray.direction * 500f;
 
         var shootVector = (targetPoint - shootPoint).normalized;
-        Debug.DrawLine(shootPoint, shootVector, Color.cyan, 1f);
-        projectileRb.AddForce(shootVector * _shootForce);
+        projectile.transform.forward = shootVector;
+        projectile.Initialize(shootPoint, Physics.gravity.y);
+        projectile.AddImpulse(shootVector * _shootForce);
     }
     
 #if UNITY_EDITOR

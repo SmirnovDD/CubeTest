@@ -142,6 +142,7 @@ MonoBehaviour:
   BottomClamp: -30
   CameraAngleOverride: 0
   LockCameraPosition: 0
+  LockCameraYRotation: 0
 --- !u!114 &2473909549228436705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,9 +189,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 129
   _camera: {fileID: 0}
-  _stubMaterial: {fileID: 0}
-  _blockedMaterial: {fileID: 0}
-  _destroyMaterial: {fileID: 0}
+  _stubMaterial: {fileID: 2100000, guid: e8225adf303ac724c8144c360fcdb302, type: 2}
+  _blockedMaterial: {fileID: 2100000, guid: e674f378b1a26f748870882ef4ce4455, type: 2}
+  _destroyMaterial: {fileID: 2100000, guid: c4c925c183d5c0644a8d4f810f81a9fe, type: 2}
 --- !u!114 &8787618649313338744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,13 +235,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13c018f1d91b72946910d9ad35b6464b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectilePrefab: {fileID: 6076679409932258701, guid: f4e4197dc55dd4440a3b0e98fa247490,
+  _projectilePrefab: {fileID: -7619218257101155544, guid: f4e4197dc55dd4440a3b0e98fa247490,
     type: 3}
-  _shootForce: 2000
-  _shootPointOffset: {x: 0, y: 1.39, z: 0.3}
-  _shootCheckLayerMask:
-    serializedVersion: 2
-    m_Bits: 3969
+  _shootForce: 20
+  _shootPointOffset: {x: 0, y: 1.375, z: 0}
 --- !u!1001 &8356827298809233430
 PrefabInstance:
   m_ObjectHideFlags: 0

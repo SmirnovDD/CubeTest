@@ -24,16 +24,24 @@ public class CollisionChecker : MonoBehaviour
         var placedObject = other.GetComponent<IPlacedObject>();
         if (placedObject != null && placedObject.IsGround)
             return;
-        if (other.gameObject.layer == LayerMask.NameToLayer("DynamicObject") || SpaceOccupied(other))
+        if (other.gameObject.layer == LayerMask.NameToLayer("DynamicObject") || SpaceOccupied(other) || IsCombatObject(placedObject))
         {//TODO get state when releasing object set bool to true
             IsBlocked.Value = true;
             _blockingObjects.Add(other);
         }
     }
 
+    private static bool IsCombatObject(IPlacedObject placedObject)
+    {
+        if (placedObject == null)
+            return false;
+        return placedObject.IsCombatObject;
+    }
+
     private void OnTriggerStay(Collider other)
     {
-        if (_blockingObjects.Contains(other) && other.gameObject.layer != LayerMask.NameToLayer("DynamicObject") && !SpaceOccupied(other))
+        var placedObject = other.GetComponent<IPlacedObject>();
+        if (other.gameObject.layer != LayerMask.NameToLayer("DynamicObject") && !SpaceOccupied(other) && !IsCombatObject(placedObject))
         {
             _blockingObjects.Remove(other);
             CheckForBlockRelease();
@@ -43,8 +51,7 @@ public class CollisionChecker : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         _colliders.Remove(other);
-        if (_blockingObjects.Contains(other))
-            _blockingObjects.Remove(other);
+        _blockingObjects.Remove(other);
         CheckForBlockRelease();
     }
 

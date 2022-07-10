@@ -64,7 +64,7 @@ public class Turret : MonoBehaviour {
                 var muzzlePosition = muzzle.position;
                 
                 BallisticShootingMath.SolveBallisticArc(muzzlePosition, _velocity, targetPos, -gravity, out targetDirLow, out targetDirHigh, out shootAngle);
-			
+			    
                 Vector3 targetVelocity = curTarget.velocity;
                 var ammo = Instantiate(projPrefab, muzzlePosition, Quaternion.identity);
                 ammo.Initialize(muzzlePosition, gravity);

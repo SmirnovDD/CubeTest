@@ -7,6 +7,7 @@ public interface IPlacedObject : IColorChangable
     BoxCollider Collider { get; }
     public bool IsSupport { get; }
     public bool IsGround { get; }
+    public bool IsCombatObject { get; }
     public bool OverrideSnapPosition { get; }
     public bool HasNeighbourFromSide(ConnectedFromSide side);
     public ReactiveCollection <NeighbourObject> NeighbourObjects { get; } //TODO maybe change to List<NeighbourObject> to avoid calling ToList()
