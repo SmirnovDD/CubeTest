@@ -9,6 +9,7 @@ public static class ObjectsBuildInfo
         {ObjectToPlaceType.SmallCubeFloor, new [] {SnapPointsDirections.Front, SnapPointsDirections.Left, SnapPointsDirections.Back, SnapPointsDirections.Right}},
         {ObjectToPlaceType.SmallCubeStairs, new [] {SnapPointsDirections.AllCentered}},
         {ObjectToPlaceType.Door, new [] {SnapPointsDirections.AllCentered}},
+        {ObjectToPlaceType.Turret, new [] {SnapPointsDirections.Bottom}},
     };
 
     public static readonly Dictionary<ObjectToPlaceType, SnapPointsDirections[]> ObjectsOverridenSnapPoints = new()
@@ -23,6 +24,7 @@ public static class ObjectsBuildInfo
         {ObjectToPlaceType.SmallCubeFloor, new[] {SupportedFromSides.Left, SupportedFromSides.Right, SupportedFromSides.Front, SupportedFromSides.Back}},
         {ObjectToPlaceType.SmallCubeStairs, new[] {SupportedFromSides.Bottom}},
         {ObjectToPlaceType.Door, new[] {SupportedFromSides.Bottom, SupportedFromSides.Left, SupportedFromSides.Right}},
+        {ObjectToPlaceType.Turret, new[] {SupportedFromSides.Bottom}},
     };
 
     public static readonly Dictionary<ObjectToPlaceType, SupportRule> ObjectSupportRule = new()
@@ -32,6 +34,7 @@ public static class ObjectsBuildInfo
         {ObjectToPlaceType.SmallCubeFloor, SupportRule.HorizontalPlaneOppositeSides},
         {ObjectToPlaceType.SmallCubeStairs, SupportRule.All},
         {ObjectToPlaceType.Door, SupportRule.Top},
+        {ObjectToPlaceType.Turret, SupportRule.All},
     };
 
     public static readonly Dictionary<ObjectToPlaceType, ObjectSnapOffset> ObjectSnapOffsets = new()
@@ -41,5 +44,6 @@ public static class ObjectsBuildInfo
         {ObjectToPlaceType.SmallCubeFloor, ObjectSnapOffset.HalfHeightOffset},
         {ObjectToPlaceType.SmallCubeStairs, ObjectSnapOffset.None},
         {ObjectToPlaceType.Door, ObjectSnapOffset.None},
+        {ObjectToPlaceType.Turret, ObjectSnapOffset.None},
     };
 }

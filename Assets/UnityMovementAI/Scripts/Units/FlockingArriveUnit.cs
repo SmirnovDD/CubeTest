@@ -33,7 +33,10 @@ namespace UnityMovementAI
         void Update()
         {
             if (target == null)
+            {    
+                steeringBasics.Stop();
                 return;
+            }
             
             var (accel, isJumping) = wallAvoidance.GetSteering();
 

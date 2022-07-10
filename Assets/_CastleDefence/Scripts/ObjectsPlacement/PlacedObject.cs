@@ -26,6 +26,8 @@ public class PlacedObject : MonoBehaviour, IPlacedObject
     [SerializeField] private int _maxSupportedDistance;
     public int MaxSupportedDistance => _maxSupportedDistance;
 
+    public bool IsCombatObject => _type > ObjectToPlaceType.NON_COMBAT && _type < ObjectToPlaceType.NON_COMBAT;
+    
     private MeshRenderer[] _meshRenderers;
     private Material[] _defaultMaterials;
 

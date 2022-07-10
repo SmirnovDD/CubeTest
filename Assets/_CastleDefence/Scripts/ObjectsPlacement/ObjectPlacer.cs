@@ -148,9 +148,12 @@ public class ObjectPlacer : MonoBehaviour
         bool notCollidingWithBlockingObject = _objectPlacingCollisionChecker != null && !_objectPlacingCollisionChecker.IsBlocked.Value;
         if (haveObjectToPlace && _canPlace && notCollidingWithBlockingObject)
         {
-            var rb = _objectPlacingTransform.GetComponent<Rigidbody>();
-            Destroy(rb);
             var placedObject = _objectPlacingTransform.GetComponent<PlacedObject>();
+            if (placedObject.Type < ObjectToPlaceType.СOMBAT || placedObject.Type > ObjectToPlaceType.NON_COMBAT)
+            {
+                var rb = _objectPlacingTransform.GetComponent<Rigidbody>();
+                Destroy(rb);
+            }
             SetupNeighbours(_objectPlacingCollisionChecker.Colliders, placedObject);
             _objectPlacingTransform.gameObject.layer = LayerMask.NameToLayer("Default");
 
